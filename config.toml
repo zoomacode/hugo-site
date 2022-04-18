@@ -1,4 +1,23 @@
 baseURL = 'http://zoomacode.net/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
-theme = "hugo-book"
+title = 'Chaotic thoughts'
+theme = "ananke"
+copyright = "Anton Golubtsov"
+description = "A collection of random thoughts on random topics"
+googleAnalytics = "G-FFDE4QQDRP"
+
+[[params.ananke_socials]]
+name = "twitter"
+url = "https://twitter.com/zoomacode"
+
+[[params.ananke_socials]]
+name = "github"
+url = "https://github.com/zoomacode"
+
+[[params.ananke_socials]]
+name = "linkedin"
+url = "https://www.linkedin.com/in/zoomacode/"
+
+[[params.ananke_socials]]
+name = "keybase"
+url = "https://keybase.io/zoomacode"
