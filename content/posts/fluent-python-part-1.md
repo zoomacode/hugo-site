@@ -1,7 +1,7 @@
 ---
 title: "Fluent Python Part 1"
 date: 2022-05-02T22:30:35-07:00
-draft: true
+draft: false
 author: Anton Golubtsov
 ---
 
