@@ -9,7 +9,8 @@ author: Anton Golubtsov
 
 Somebody recommended [Fluent Python by Luciano Romalho](https://www.oreilly.com/library/view/fluent-python-2nd/9781492056348/) on twitter as a wonderful book about Python and the data structures part is great in particular. On my current project, I do a lot of data transformation and I started wondering if the book can help me to sharpen my python skills. I’ve just finished reading the first, Data Structures, part of the book and I have something to say. First of all the book is 1000 pages thick but don’t be afraid it is full of code snippets so the test is much shorter. Secondly, I discovered a lot of things I didn’t know so I decided to write a short article about what I’ve learned from the book.
 
-**Data unpacking**
+#### **Data unpacking**
+
 Data unpacking is a syntax which allows to unpack a data structure to more simple representation. For example:
 
 ```python
@@ -38,7 +39,8 @@ We can also unpack more complex data structures, for example:
 
 It is called nested unpacking.
 
-**Pattern matching (Python 3.10)**
+#### **Pattern matching (Python 3.10)**
+
 Pattern matching is a way to replace `if … else` statements for checking a data structure fulfills a condition. For example, you have a list of strings, which you got from a csv file, and you need to call different functions depends on the value of the second element. This is how you would probably do it using `if … else`:
 
 ```python
@@ -91,7 +93,8 @@ Imagine how much code you will need to write to express the same thing through `
 
 You can find official patter matching tutorial in [PEP 636](https://peps.python.org/pep-0636/).
 
-**Slice objects**
+#### **Slice objects**
+
 I’ve never thought that slice operation is actually an object that you can create explicitly and the apply to any other object. I don’t want to copy examples from the book they are much fancier than mine. So here is a basic example:
 
 ```python
@@ -109,7 +112,8 @@ I’ve never thought that slice operation is actually an object that you can cre
 
 It can be handy if you need to describe what part of data you need to extract and to have formal names for a slice instead of `5:7`.
 
-**Memory view**
+#### **Memory view**
+
 Arrays store data in continuous memory like arrays in C++. Memory views help to the same raw memory in a different shape. For example, you can show an array of bytes as an array of integers, as matrix, or a slice without copying any data.
 
 ```python
@@ -133,7 +137,8 @@ Arrays store data in continuous memory like arrays in C++. Memory views help to 
 
 Memory view can be quite handy if you work with raw data like writing binary files, stores data in arrays or something else.
 
-**Hashable**
+#### **Hashable**
+
 You may be surprised but I’ve never checked what hashable means probably because I don’t use dictionaries with anything besides strings. Anyhow, if you want to use something as a key in a `dict` you need to know what the hashable is. In short it is something immutable so the key can’t be changed after it is added to a dictionary or a set. For example, things like strings and numbers are hashable because you can’t really modify after creation. Lists are mutable so not hashable. Tuples are immutable but they can contain mutable object so tuples are hashable if all their items are hashable. For example, a tuple with a list in it is not hashable but a tuple of tuples is hashable.
 
 ```python
@@ -151,7 +156,8 @@ You may be surprised but I’ve never checked what hashable means probably becau
 
 For user defined types hashability is a bit trickier. They are all hashable unless there is a custom `__eq__` implemented then you need to implement `__hash__` as well to make it hashable. If you need it.
 
-**Setdefault and defaultdict**
+#### **Setdefault and defaultdict**
+
 Sometimes you need to update a dictionary item but the item may or may not be there so you need to create a default value before you can update it. Dictionary has a nice `get` function which returns something if the key you requested is abstain. The problem is that `get` does not modify the dictionary. To work around it you can write something like this:
 
 ```python
@@ -193,10 +199,12 @@ Instead of `defaultdict` you can use `setdefault` method of a regular `dict` whe
     {1: [], 2: [2]}
 ```
 
-**Return** `**None**` **convention for methods which modify data**
+#### **Return** `**None**` **convention for methods which modify data**
+
 I didn’t know that but apparently Python methods should not return any data if they modify data and return a copy of data when they do. We can see it in the previous example when `append` didn’t return anything. It is not a strict rule obviously. It is just a way to indicate that data was modified in place. It may seem in convenient since we can create a chain of appends like `d.append(1).append(2)` but I think it is nice rule to have or follow. Depends on your needs of course.
 
-**collections.Chainmap**
+#### **collections.Chainmap**
+
 `collections.Chainmap` allows to search through multiple maps with one call. It also allows to modify existing keys.
 
 ```python
@@ -219,7 +227,8 @@ I didn’t know that but apparently Python methods should not return any data if
 
 I’ve never had a need to search through multiple maps but it is a nice option to have.
 
-**collections.Counter**
+#### **collections.Counter**
+
 It is a pretty cool thing it ingest a list of items and counts how many time each of unique items is presented in the list.
 
 ```python
@@ -241,7 +250,8 @@ It also has a set of methods to count as you go:
     c.fromkeys(     c.most_common(  c.subtract(
 ```
 
-**Printing unicode characters by their names and names lookup**
+#### **Printing unicode characters by their names and names lookup**
+
 `print` supports a pretty feature that allows to print and lookup characters by their names. I like different unicode symbols like emojis but I’m not sure that will be happy to see them in the code just for the fonts compatibility reason.
 
 ```python
@@ -256,7 +266,8 @@ It also has a set of methods to count as you go:
     'ろ'
 ```
 
-**Normalizing unicode**
+#### **Normalizing unicode**
+
 Unicode has different ways to encode visually identical characters. For example, diacritics can be presented in two different ways a character + a diacritical modifier or as a character with diacritic.
 
 ```python
@@ -281,10 +292,12 @@ From the python documentation: https://docs.python.org/3/library/unicodedata.htm
 
 There are more ways to normalize unicode strings some of them makes sense only if you deal with data indexing for a search engine or something like that. They are described at the great detail in the book.
 
-**Pyuca/Sorting unicode**
+#### **Pyuca/Sorting unicode**
+
 [Pyuca](https://github.com/jtauber/pyuca) is a pure python library that sorts not English text properly. If you work with text or you build a UI you might want to sort non-English text as it supposed be sorted.
 
-**Numeric Meaning of Characters**
+#### **Numeric Meaning of Characters**
+
 I was surprised to discover that `unicodedata` module allows to get numeric values for characters I would never expect to be convertible to a number without extra effort. Here are just a few examples:
 
 ```python
@@ -300,7 +313,8 @@ I was surprised to discover that `unicodedata` module allows to get numeric valu
 
 Try to play with `isdigit`, `isnumeric`, and regular expressions.
 
-**Everything is a reference**
+#### **Everything is a reference**
+
 It is not something I learned from the book but in the very early days of my work with python. My first production language was C++ which has its ways to express whether a variable: a value, a reference, a pointer, a const value, a const reference, or a const point or a point to const data. And it also have all sorts of optimizations like return value optimization. So from the very first days I was curious what exactly is a function argument and what operations like `b = a` do.
 
 In C++ a lot of things are explicit, not everything but you can be explicit enough especially when it is important. In Python everything is implicit. Everything in python is a reference so if you don’t keep it mind and don’t take actions to create a copy when of a object you may see interesting and probably not solicited side-effects.
@@ -353,5 +367,6 @@ Python creates a single list and then reuse if for every call with a default par
 
 here we see the same patter. Now imagine that your class accepted a list and then started to modify it or share it with other methods and over time as the code evolves that list can be modified at any random point. Now when I’m thinking about it I probably should revisit some of the code.
 
-**Summary**
+#### **Summary**
+
 Python is a wonderful and full of surprises language and reading books like [Fluent Python by Luciano Romalho](https://www.oreilly.com/library/view/fluent-python-2nd/9781492056348/) really helps to uncover unknown gems or re-discover forgotten ones.
