@@ -4,7 +4,7 @@ title = 'Chaotic thoughts'
 theme = "ananke"
 copyright = "Anton Golubtsov"
 description = "A collection of random thoughts on random topics"
-googleAnalytics = "UA-25776844"
+googleAnalytics = "G-57DD980L5H"
 disqusShortname = 'ChaoticThoughts'
 
 [[params.ananke_socials]]
