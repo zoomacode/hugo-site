@@ -7,11 +7,11 @@ author: Anton Golubtsov
 
 # Fluent Python: learnings (part 1)
 
-Somebody recommended [Fluent Python by Luciano Romalho](https://www.oreilly.com/library/view/fluent-python-2nd/9781492056348/) on twitter as a wonderful book about Python and the data structures part is great in particular. On my current project, I do a lot of data transformation and I started wondering if the book can help me to sharpen my python skills. I’ve just finished reading the first, Data Structures, part of the book and I have something to say. First of all the book is 1000 pages thick but don’t be afraid it is full of code snippets so the test is much shorter. Secondly, I discovered a lot of things I didn’t know so I decided to write a short article about what I’ve learned from the book.
+Somebody recommended [Fluent Python by Luciano Romalho](https://www.oreilly.com/library/view/fluent-python-2nd/9781492056348/) on Twitter as a wonderful book about Python and the data structures part, in particular, is great. On my current project, I do a lot of data transformations and I started wondering if the book could help me sharpen my python skills. I’ve just finished reading the first, Data Structures, part of the book and I have something to say. First of all the book is 1000 pages thick but don’t be afraid - it is full of code snippets so the text is much shorter. Secondly, I discovered a lot of things I didn’t know so I decided to write a short article about what I’ve learned from the book.
 
 #### **Data unpacking**
 
-Data unpacking is a syntax which allows to unpack a data structure to more simple representation. For example:
+Data unpacking is a syntax which allows unpacking of a data structure to more simple representation. For example:
 
 ```python
     t = (10, 20)
@@ -91,11 +91,11 @@ As you can see the code is more readable, and concise. Pattern matching is more 
 
 Imagine how much code you will need to write to express the same thing through `if … else`.
 
-You can find official patter matching tutorial in [PEP 636](https://peps.python.org/pep-0636/).
+You can find official pattern matching tutorial in [PEP 636](https://peps.python.org/pep-0636/).
 
 #### **Slice objects**
 
-I’ve never thought that slice operation is actually an object that you can create explicitly and the apply to any other object. I don’t want to copy examples from the book they are much fancier than mine. So here is a basic example:
+I’ve never thought that the slice operation is actually an object that you can create explicitly and the apply to any other object. I don’t want to copy examples from the book they are much fancier than mine. So here is a basic example:
 
 ```python
     >>> a = [1,2,3,4,5,6,7]
@@ -114,7 +114,7 @@ It can be handy if you need to describe what part of data you need to extract an
 
 #### **Memory view**
 
-Arrays store data in continuous memory like arrays in C++. Memory views help to the same raw memory in a different shape. For example, you can show an array of bytes as an array of integers, as matrix, or a slice without copying any data.
+Arrays store data in continuous memory like arrays in C++. Memory views help to view the same raw memory in a different shape. For example, you can show an array of bytes as an array of integers, as matrix, or a slice without copying any data.
 
 ```python
     >>> a = array("l", range(2000, 2006))
@@ -139,7 +139,7 @@ Memory view can be quite handy if you work with raw data like writing binary fil
 
 #### **Hashable**
 
-You may be surprised but I’ve never checked what hashable means probably because I don’t use dictionaries with anything besides strings. Anyhow, if you want to use something as a key in a `dict` you need to know what the hashable is. In short it is something immutable so the key can’t be changed after it is added to a dictionary or a set. For example, things like strings and numbers are hashable because you can’t really modify after creation. Lists are mutable so not hashable. Tuples are immutable but they can contain mutable object so tuples are hashable if all their items are hashable. For example, a tuple with a list in it is not hashable but a tuple of tuples is hashable.
+You may be surprised but I’ve never checked what hashable means because I don’t use dictionaries with anything besides strings. Anyhow, if you want to use something as a key in a `dict` you need to know what the hashable is. In short it is something immutable so the key can’t be changed after it is added to a dictionary or a set. For example, things like strings and numbers are hashable because you can’t really modify after creation. Lists are mutable so not hashable. Tuples are immutable but they can contain mutable object so tuples are hashable if all their items are hashable. For example, a tuple with a list in it is not hashable but a tuple of tuples is hashable.
 
 ```python
     >>> hash((2,3,4))
@@ -369,4 +369,4 @@ here we see the same patter. Now imagine that your class accepted a list and the
 
 #### **Summary**
 
-Python is a wonderful and full of surprises language and reading books like [Fluent Python by Luciano Romalho](https://www.oreilly.com/library/view/fluent-python-2nd/9781492056348/) really helps to uncover unknown gems or re-discover forgotten ones.
+Python is a wonderful and full of surprises and reading books like [Fluent Python by Luciano Romalho](https://www.oreilly.com/library/view/fluent-python-2nd/9781492056348/) really helps to uncover unknown gems or re-discover forgotten ones.
