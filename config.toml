@@ -5,6 +5,33 @@ theme = "ananke"
 copyright = "Anton Golubtsov"
 description = "A collection of random thoughts on random topics"
 googleAnalytics = "G-96GHV7J9Q8"
+favicon = "favicon.png"
+
+[menu]
+[[menu.main]]
+  identifier = 'about'
+  name = 'about'
+  pre = "<i class='fa fa-heart'></i>"
+  url = '/about/'
+  weight = -110
+[[menu.main]]
+  identifier = 'posts'
+  name = 'posts'
+  pre = "<i class='fa fa-heart'></i>"
+  url = '/posts/'
+  weight = -110
+[[menu.main]]
+  identifier = 'book-review'
+  name = 'book reviews'
+  pre = "<i class='fa fa-heart'></i>"
+  url = '/book-reviews/'
+  weight = -110
+
+[params]
+    show_reading_time = true
+    site_logo = "static/logo.svg"
+    mainSections = ['posts', 'book-reviews']
+
 
 [[params.ananke_socials]]
 name = "twitter"
