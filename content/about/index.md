@@ -1,7 +1,7 @@
 ---
 title: "About"
 date: 2022-05-12T20:50:09-07:00
-draft: true
+draft: false
 author: Anton Golubtsov
 ---
 
