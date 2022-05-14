@@ -6,6 +6,7 @@ copyright = "Anton Golubtsov"
 description = "A collection of random thoughts on random topics"
 googleAnalytics = "G-96GHV7J9Q8"
 favicon = "favicon.png"
+enableEmoji = true
 
 [menu]
 [[menu.main]]
