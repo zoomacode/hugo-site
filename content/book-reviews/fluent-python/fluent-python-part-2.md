@@ -153,3 +153,47 @@ This will work just fine but if you try to use `foo(b)` instead of `foo(a)` then
 ```
 
 You can try the code [here](cpp.sh/7pmck3).
+
+## Ellipsis and unbounded tuples
+
+There were a few time when I needed to specify a type hint for a tuple unknown length. In some cases, I decided to use `list[str]`, in some cases I decided to use tuple but without specifying the type of the elements.
+But there is a better way - ellipsis. You can use ellipsis when you need to annotate a tuple of something without specifying its length.
+
+```python
+def foo(t: tuple[str, ...]):
+    print(t)
+```
+
+## Walrus operator
+
+Walrus operator `:=` or _assignment expression_ is syntax sugar that creates a variable in the middle of a larger expression and that variable can be used right away. For example, you need to compute some value checks its value in an `if` statement and then do something with results without `:=` you need assign the results of the expression to a temporary variable then use in the `if` statement. This is an example from [PEP-572](https://peps.python.org/pep-0572/):
+
+```python
+match1 = pattern1.match(data)
+match2 = pattern2.match(data)
+if match1:
+    result = match1.group(1)
+elif match2:
+    result = match2.group(2)
+else:
+    result = None
+```
+
+With the walrus operator the example can be simplified to this:
+
+```python
+if match1 := pattern1.match(data):
+    result = match1.group(1)
+elif match2 := pattern2.match(data):
+    result = match2.group(2)
+else:
+    result = None
+```
+
+You can use in list comprehensions, `if` statements, `for` loops and ,it is probably not the best idea but, even as a part of variable declaration. See [PEP-572](https://peps.python.org/pep-0572/) for more details.
+
+## The `collection.abc` module
+
+There are cases when you may want to annotate a type but you want to leave some room for duck-typing. For example, you created a function that works with anything that looks like a dictionary. You can use `Union[dict, defaultdict, OrederedDict]` but it will not any or user types that behaves like a dictionary. Module [`collection.abc`](https://docs.python.org/3/library/collections.abc.html), abc stands for Abstract Base Classes, provides a set of abstract types that can help with it. For example, it provides `Callable`, `Iterable`, `Sequence`, `Mapping` and many more types. So instead of `def foo(l: List[str])` you can write `def foo(l: Sequence[str])` or instead of `def foo(d: Dict[str, str])` you can use `def foo(d: Mapping[str, str])`.
+
+Add by the way `typing.Dict` is a legacy since Python 3.10. You can use regular `dict` instead.
