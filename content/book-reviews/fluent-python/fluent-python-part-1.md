@@ -9,6 +9,7 @@ toc: true
 ## Intro
 
 Somebody recommended [Fluent Python by Luciano Romalho](https://www.oreilly.com/library/view/fluent-python-2nd/9781492056348/) on Twitter as a wonderful book about Python and the data structures part, in particular, is great. On my current project, I do a lot of data transformations and I started wondering if the book could help me sharpen my python skills. I’ve just finished reading the first, Data Structures, part of the book and I have something to say. First of all the book is 1000 pages thick but don’t be afraid - it is full of code snippets so the text is much shorter. Secondly, I discovered a lot of things I didn’t know so I decided to write a short article about what I’ve learned from the book.
+To some extend, this article is a collection of things I didn't know about Python.
 
 ## **Data unpacking**
 
