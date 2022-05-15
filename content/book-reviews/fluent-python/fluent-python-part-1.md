@@ -75,7 +75,7 @@ It is a bit hard to read and looks unnatural. With pattern matching you can simp
             raise ValueError("Unknown")
 ```
 
-As you can see the code is more readable, and concise. Pattern matching is more than that basic example. You can use to match a type, a specific element of a dictionary, or an “or” statement:
+As you can see the code is more readable, and concise. Pattern matching is more than that basic example. You can use it to match a type, a specific element of a dictionary, or an “or” statement:
 
 ```python
     match data:
