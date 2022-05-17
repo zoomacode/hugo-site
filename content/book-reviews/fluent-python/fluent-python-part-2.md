@@ -1,7 +1,7 @@
 ---
 title: "Book review: Fluent Python by Luciano Romalho (Part 2)"
-date: 2022-05-12T21:38:13-07:00
-draft: true
+date: 2022-05-16T21:38:13-07:00
+draft: false
 author: Anton Golubtsov
 toc: true
 ---
@@ -328,3 +328,88 @@ Interestingly, in the [Fluent Python](https://www.oreilly.com/library/view/fluen
 > a closure is a function that remains the bindings of the free variables that exist when the function is defined, so that they can be used later later when the function is invoked and the definition scope is no longer available.
 
 It was of course carefully introduced by an example and longer introduction but it is the first time when it clicked. Interestingly I used closures before without knowing it in C++. C++11 introduced lambda expressions that allows to specify what variable to capture and how.
+
+## Decorators
+
+As you probably know decorators allows to extend an object behavior without modifying the object itself.
+Here I'm just sharing interesting thing about the decorators.
+
+### Caching
+
+I occasionally interview candidates for software engineer role in Amazon. At the problem solving section I usually ask
+a question where at some point the candidate may suggest using caching. Implementing cache or LRU cache can be tricky especially if you have limited time. So I was surprised to discover that Python provides caching decorators in the standard library. They are [`functools.cache`](https://docs.python.org/3/library/functools.html#functools.cache) and [`functools.lru_cache`](https://docs.python.org/3/library/functools.html#functools.lru_cache). Here are just a few examples from the documentation.
+
+Simple caching
+
+```python
+@cache
+def factorial(n):
+    return n * factorial(n-1) if n else 1
+
+>>> factorial(10)      # no previously cached result, makes 11 recursive calls
+3628800
+>>> factorial(5)       # just looks up cached value result
+120
+>>> factorial(12)      # makes two new recursive calls, the other 10 are cached
+479001600
+```
+
+LRU cache:
+
+```python
+@lru_cache(maxsize=32)
+def get_pep(num):
+    'Retrieve text of a Python Enhancement Proposal'
+    resource = 'https://www.python.org/dev/peps/pep-%04d/' % num
+    try:
+        with urllib.request.urlopen(resource) as s:
+            return s.read()
+    except urllib.error.HTTPError:
+        return 'Not Found'
+
+>>> for n in 8, 290, 308, 320, 8, 218, 320, 279, 289, 320, 9991:
+...     pep = get_pep(n)
+...     print(n, len(pep))
+
+>>> get_pep.cache_info()
+CacheInfo(hits=3, misses=8, maxsize=32, currsize=8)
+```
+
+The module also have a nice [`cached_property`](https://docs.python.org/3/library/functools.html#functools.cached_property) which helps to memoize heavy lifting methods.
+
+### Functions overloading
+
+Python does not support function overloading but we can always create a dispatcher function that checks types of the arguments and calls a type specific implementation. The same `functools` module has a partial solution for functions overloading - [`functools.singledispatch`](https://docs.python.org/3/library/functools.html#functools.singledispatch). `singledispatch` is a decorator that returns a generic dispatcher that provides a method for registering type specific implementations.
+
+An example from the documentation:
+
+```python
+>>> from functools import singledispatch
+>>> @singledispatch
+... def fun(arg, verbose=False):
+...     if verbose:
+...         print("Let me just say,", end=" ")
+...     print(arg)
+>>> @fun.register
+... def _(arg: int, verbose=False):
+...     if verbose:
+...         print("Strength in numbers, eh?", end=" ")
+...     print(arg)
+...
+>>> fun("Hello, world.")
+Hello, world.
+>>> fun("test.", verbose=True)
+Let me just say, test.
+>>> fun(42, verbose=True)
+Strength in numbers, eh? 42
+```
+
+Unfortunately `singledispatch` uses only the first argument for dispatching but it s probably enough for 99% of use-cases.
+
+## Summary
+
+The second part of the book ushers us through the wonderful world of callables. It starts from seemingly unrelated things like type hints but each piece of the puzzle contributes to the whole picture. And in the end you starts seeing connections between different parts and then at some point it just clicks: "Oh. Wow. Now I see. Now, I get it". For example, I wrote just a few decorators in my career some of them were quite simple some of them were more complex. For the more complex cases I often were a bit confused by how all that magic works. The book showed how closures help to build decorators and decorator actually do. The book showed a few neat tricks like caching, registers, and dispatchers. Also is a also huge fan of type hints I appreciate the level of details the provides on that topic.
+
+I want to mention protocols as well. I always had that concern that I can't use type hints for [`boto3`](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) client classes because there are no public client classes in `boto3`. Hence I couldn't use type hints in my code, which actually led to a few bug in production, with protocols I can finally create definitions for the clients I use so I can check if the clients are called correctly.
+
+In my opinion, [Fluent Python by Luciano Romalho](https://www.oreilly.com/library/view/fluent-python-2nd/9781492056348/) is definitely worth spending $55 even if you stop reading the book after the part two. Must read.
