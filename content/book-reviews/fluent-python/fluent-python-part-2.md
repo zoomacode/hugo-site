@@ -2,6 +2,7 @@
 title: "Book review: Fluent Python by Luciano Romalho (Part 2)"
 date: 2022-05-16T21:38:13-07:00
 draft: false
+summary: The second part of the book focuses on different callables. You will know about type hints for Callables, protocols, closures, decorators and other related things.
 author: Anton Golubtsov
 toc: true
 ---

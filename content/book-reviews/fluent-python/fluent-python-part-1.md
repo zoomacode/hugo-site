@@ -1,6 +1,7 @@
 ---
 title: "Book review: Fluent Python by Luciano Romalho (Part 1)"
 date: 2022-05-02T22:30:35-07:00
+summary: I've just finished reading the first part of the Fluent Python book and it is so exciting that I decided to write about the largest gems I discovered in the book.
 draft: false
 author: Anton Golubtsov
 toc: true
