@@ -1,11 +1,11 @@
 ---
-title: "One Interesting Code Challenge"
+title: "One Interesting Code Challenge from Leetcode: finding anagrams in a string"
 date: 2022-05-29T11:22:58-07:00
 draft: true
 author: Anton Golubtsov
 ---
 
-In my coding interviews I often use a simplified version of [this challenge from leetcode](https://leetcode.com/problems/find-all-anagrams-in-a-string/).
+In my coding interviews I often use a simplified version of [this challenge from Leetcode](https://Leetcode.com/problems/find-all-anagrams-in-a-string/).
 The simplified version I use: _Given two strings `s` and `p`, return true if `s` contains an anagram for `p`_.
 I like this task because the solution and be improved little by little and there are a lot things to discuss. From algorithmic complexity to CPU cache level optimization. Here I want to walk you through how I solved that challenge for the first time.
 
@@ -267,7 +267,7 @@ It looks like we make things worse. However, it is not entirely true, the new in
 
 ## Performance tests
 
-To make tests more reliable I wrote a small script and put one of the toughest test cases from [Leetcode](https://leetcode.com) into a text file. As a tests sample I picked the one which caused timeout in the very first version. The performance test sources code: [perf_test.py](perf_test.py) and [perf_input.txt](perf_input.txt)
+To make tests more reliable I wrote a small script and put one of the toughest test cases from [Leetcode](https://Leetcode.com) into a text file. As a tests sample I picked the one which caused timeout in the very first version. The performance test sources code: [perf_test.py](perf_test.py) and [perf_input.txt](perf_input.txt)
 
 ```bash
 $ python3 content/posts/perf_test.py
@@ -308,7 +308,7 @@ However, there is one flaw, at least in Python, as length of `p` grows, the hash
 0.09212760000002618
 ```
 
-[Leetcode](https://leetcode.com) test fails even earlier that the first version. But here are performance test results anyway:
+[Leetcode](https://Leetcode.com) test fails even earlier that the first version. But here are performance test results anyway:
 
 ```bash
 SolutionSort:      12.9363 sec
