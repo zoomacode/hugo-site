@@ -1,7 +1,7 @@
 ---
 title: "One Interesting Code Challenge from Leetcode: finding anagrams in a string"
 date: 2022-05-29T11:22:58-07:00
-draft: true
+draft: false
 author: Anton Golubtsov
 ---
 
