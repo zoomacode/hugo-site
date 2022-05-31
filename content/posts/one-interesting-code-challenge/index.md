@@ -7,14 +7,12 @@ author: Anton Golubtsov
 
 In my coding interviews I often use a simplified version of [this challenge from leetcode](https://leetcode.com/problems/find-all-anagrams-in-a-string/).
 The simplified version I use: _Given two strings `s` and `p`, return true if `s` contains an anagram for `p`_.
-I like this task because it can be solved in many, sometime unexpected, ways and it allows to ask
-a lot of follow up question about the decisions a candidate made. Here I want to walk you through
-the common and not so common solutions.
+I like this task because the solution and be improved little by little and there are a lot things to discuss. From algorithmic complexity to CPU cache level optimization. Here I want to walk you through how I solved that challenge for the first time.
 
-## The most expensive one
+## The most expensive solution
 
-The first solutions that suggests the question itself is that: let's build a list of possible
-anagrams and then we just need to check if the one of them is in the `s` string. That sounds simple,
+The first solutions that is suggested by the question is that: let's build a list of possible
+anagrams and then we just check if the one of them is in the `s` string. Sounds simple,
 right? There are a few problems with this approach. First of all, implementing an efficient algorithm
 for generating all possible permutations is already quite a challenge. And secondly, the time complexity
 for the final solution will be something like `O(s*p!)`. The factorial grows really fast `3! == 6`,
@@ -22,13 +20,13 @@ for the final solution will be something like `O(s*p!)`. The factorial grows rea
 
 ## First step in the right direction
 
-The first step toward more optimal solution is to tweak how we perceive the question just a little bit. In steads of
-_return true if `s` contains an anagram for `p`_ we will use _return true if `s` contains a substring with character from string `p` in any order_.
+The first step towards a more optimal solution is to tweak a little bit the way how we perceive the question just. Instead
+_return true if `s` contains an anagram for `p`_ we will use _return true if `s` contains a substring with character from string `p` in any order_. This will change the way how we think about the problem and unlock more solutions.
 
 ## Sort
 
-The order is a flexible thing. We can try to ignore or we can make things ordered in the way we want.
-We can sort characters in `p` and then sort all possible substrings of length `p` in `s`.
+One of the ways to work with unordered data is make it ordered in the way we want.
+So we sort characters in `p` and then sort all possible substrings of length `p` in `s`.
 
 ```python
 class Solution:
@@ -49,16 +47,13 @@ class Solution:
 
 > 34 / 61 test cases passed.
 
-It works but it is too slow. The time complexity for this approach is `O(s*p*log(p))`. In Leetcode, it fails because it times out in one of the test cases.
+It works but it is too slow and it timed out at one of the test cases when I submitted it to Leetcode. The time complexity for this approach is `O(s*p*log(p))`.
 
 ## Count
 
-Ok. The sorting strings was not the best idea but it is another step in the right direction.
-Imagine we have `p = "appleappleapple"` after sorting we will have `p = "aaaeeelllpppppp`
-now we see that we care need to make sure that a `s`'s substring and `p` both have equal number of
-the same characters. You may get to this point right away but not everybody as smart as you.
-I'm definitely not of those people. Back to the business, we need to count number of characters in
-a substring and in `p` and compare those numbers and Python has a nice little helper for us - `Counter`.
+Ok. The sorting strings was not the best idea but we can learn something from it. Imagine that we have `p = "appleappleapple"` after the sorting we have `p = "aaaeeelllpppppp"`.
+We can present that string as a dict `{ 'a': 3, 'e':3, 'l':3, 'p':6 }`. We can present any string in a similar way. Building the dictionary is a simpler operation that sorting. So we can count number of characters in
+a substring and in `p` and then compare those numbers. Python has a nice little helper to simplify that task - `collections.Counter`.
 
 ```python
 class Solution:
@@ -85,9 +80,9 @@ Ok. We again "Exceeded the time" but this time it was overall time for all 61 te
 
 ## Counting but faster
 
-The main problem with the previous approach that we are rebuilding the counter on very iteration.
-If we look at the substring as at a sliding window, we will see that we can reuse most of the counter's
-content. We just need to add one character at the front and remove one at the back of the window.
+The main problem with the previous approach is that we are rebuilding the counter on very iteration.
+We look at the substring as at a sliding window so we need to add one character at the front and remove one at the back of the window.
+That will allow us to keep the counter between iterations.
 
 ```python
 class Solution:
@@ -121,7 +116,7 @@ class Solution:
 > Runtime: 426 ms, faster than 23.71% of Python3 online submissions for Find All Anagrams in a String.  
 > Memory Usage: 15.2 MB, less than 33.09% of Python3 online submissions for Find All Anagrams in a String.
 
-We made it through but 23th percentile is not a big deal. Let's try to make it a little bit faster.
+We finally made it through but 23th percentile is not a great result. Let's try to make it a little bit faster.
 
 ## Cutting costs: the counter
 
@@ -146,7 +141,7 @@ It may look that we reached `O(s)` time complexity and it can't be improved. But
 0.08134488799987594
 ```
 
-`timeit` measures how many seconds are needed to run an operation of a number of times. `timeit` runs one million iterations by default. `s.findAnagrams("abcabc","abc")` runs:
+`timeit` measures how many seconds are needed to run an operation for a number of times. `timeit` runs one million iterations by default. `s.findAnagrams("abcabc","abc")` runs:
 
 -   1 time, 1.42s or 12% of the time, construct the counter
 -   6 times, 0.919s\*4 or 32.7% of the time, `cur.subtract(prev)`
@@ -155,10 +150,10 @@ It may look that we reached `O(s)` time complexity and it can't be improved. But
 -   6 times, 0.09s\*4 or 3.2% of the time, `cur == p_counter`
 -   4 times, 0.073s\*4 or 2.5% of the time, `list.append()`
 
-The counter its ~60% of the execution time. The has one important constrain _s and p consist of lowercase English letters_.
-That means that we can use a list for counting because there only 26 letter in English and all their codes a sequential. See: [ascii](https://en.wikipedia.org/wiki/ASCII).
+The counter consumes ~60% of the execution time. But do we really need the full-fledged generic Counter or we can use something simpler and faster. The task has one important constrain _s and p consist of lowercase English letters_.
+That means that we can use a list of 26 elements, one per each English letter. Thank to the [ascii](https://en.wikipedia.org/wiki/ASCII) standard the codes of those letters are sequential so we don't need a dictionary from translation of a single letter to its counter.
 
-Simple measurements shows that `list` can be 10x faster that `Counter`.
+I measured `list` performance using `timeit` to confirm that `list` faster that `dict`.
 
 ```python
 >>> timeit('l[10]+=1', setup="l = [0]*26", globals=globals())
@@ -167,7 +162,7 @@ Simple measurements shows that `list` can be 10x faster that `Counter`.
 0.08017934499912371
 ```
 
-After tweaking our implementation we have something like this:
+After replacing `Counter` by `list` the implementation looks like like this:
 
 ```python
 class Solution:
@@ -201,32 +196,18 @@ class Solution:
         return result
 ```
 
-> Success
-> Runtime: 133 ms, faster than 79.65% of Python3 online submissions for Find All Anagrams in a String.
-> Memory Usage: 15.3 MB, less than 33.09% of Python3 online submissions for Find All Anagrams in a String.
-
-We reduced the execution time by 65%.
+The changed reduced the execution time by 65% (from 11.24s to 3.95s).
 
 ```python
 >>> timeit('s.findAnagrams("abcabc","abc")', globals=globals())
 3.9490315559996816
 ```
 
-Almost 80th percentile and 65% time reduction, that is not bad for a small change. The execution time actually fluctuates between 87ms and 165ms (p99 and p65). Here is a list of measurements: 87, 108, 115, 140, 145, 157, 165, 169 averaging at 135ms (p80).
-
 ## Removing the comparison and reaching O(s)
 
-We reached 80th percentile but the algorithm remains `O(s*p)`. In this section we will remove `p` from `O(s*p)`. Removing `p` means that we need to identify that we found an anagram with constant time `O(1)`.
-Here:
+We've improved the implementation but the algorithmic complexity remains the same -`O(s*p)`. In this section we will remove `p` from `O(s*p)` and reduce the costs even further. The `p` parts hides in `cur == p_counter`.
 
-```python
-            cur[prev - a] -= 1
-            cur[c - a] += 1
-```
-
-We update just two integers and if we can look at those integers and tell whether or not they are equal to the numbers in `p_counter`. If we also can find a way to check that other numbers are also equal then we can immediately tell that we found an anagram.
-
-We will start from subtracting `cur` from `p_counter` when they are equal, the results is a list of zeros. The first tweak is to remove `p_counter` and initialize `cur` by the negative numbers of characters.
+When `cur == p_counter` is true difference between `cur` and `p_counter` give a list of zeros. We can use it for our advantage. Since `p_counter` is a constant, `cur == p_counter` cn be replaced by `(cur - p_counter) == (p_counter - p_counter)` which can be replaced by `(cur - p_counter) == [0]*26`.
 
 ```python
         cur = [0]*26
@@ -234,7 +215,7 @@ We will start from subtracting `cur` from `p_counter` when they are equal, the r
             cur[c - a] -= 1
 ```
 
-Now we can compare `cur` against a list of zeros. The next tweak is to know how many zeros `cur` already have so we can eliminate the list of zeros.
+Now the `[0]*26` part can be replaced by a counter that tracks number of zeros in `cur`. We can implement a zeros' tracker by incrementing a zero's counter by checking a letter counter value before updating it.
 
 ```python
 class Solution:
@@ -275,17 +256,18 @@ class Solution:
         return result
 ```
 
-> Success
-> Runtime: 99 ms, faster than 98.23% of Python3 online submissions for Find All Anagrams in a String.
-> Memory Usage: 15.3 MB, less than 32.70% of Python3 online submissions for Find All Anagrams in a String.
+And again a performance test:
 
-But I wouldn't be so happy. The results in Leetcode fluctuate from p55 to p99 from run to run. Here is a list of measurements: 95,110, 112, 117, 131, 131, 135, 135,136,149,155,172,185,186 averaging at 139ms (p75).
+```python
+>>> timeit('s.findAnagrams("abcabc","abc")', globals=globals())
+6.378495043000001
+```
 
-## Making results more stable
+It looks like we make things worse. However, it is not entirely true, the new initialization logic is heavier that the old one and we used a simple test case. Let's try something less simple.
 
-We need more reliable environment to measure performance of the code. I took the tests sample which caused timeout in the very first version and will use it to measure performance. The performance test sources code: [perf_test.py](perf_test.py) and [perf_input.txt](perf_input.txt)
+## Performance tests
 
-The results are pretty stable:
+To make tests more reliable I wrote a small script and put one of the toughest test cases from [Leetcode](https://leetcode.com) into a text file. As a tests sample I picked the one which caused timeout in the very first version. The performance test sources code: [perf_test.py](perf_test.py) and [perf_input.txt](perf_input.txt)
 
 ```bash
 $ python3 content/posts/perf_test.py
@@ -302,7 +284,7 @@ But we are not done here.
 
 ## One more teeny-tiny tweak
 
-Now when we are the point when we operate at milliseconds level we can start optimizing small operations like `prev - a`. If we create a list of counter where first N elements we added just to remove ` - a` part from `cur[prev - a]`. We will win another 12% which brings us to 0.0089ms instead of 12.9256. That is 1452x faster.
+Now when we are the point when we operate at milliseconds level we can start optimizing small operations like `prev - a`. We can remove `- a` part by creating a counter list where we added padding N elements so `cur[prev]` operations hit a counter inside of the list. That small change won another 12%. That brings us to 0.0089ms instead of 12.9256 which is 1452x faster that the original version.
 
 ```bash
 SolutionSort:      12.9256 sec
@@ -313,12 +295,11 @@ SolutionOs:        0.0101 sec (-15.66% improvement)
 SolutionOs2:       0.0089 sec (-12.31% improvement)
 ```
 
-## Making things even faster
+## A different approach: hashing
 
-There is at least one more trick. One of the recent candidate suggested an approach when we don't need to count characters at all. The candidate suggested to use character order agnostic hash function so instead of counting we will compute hash values for a substring and `p` and then just compare two numbers.
+There is at least one more approach. A recent candidate I interviewed suggested an approach when we don't need to count characters at all. The candidate suggested to use character order agnostic hash function so instead of counting we will compute hash values for a substring and `p` and then just compare two numbers.
 
-However, there is one flow as length of `p` grows, the hash grows as well. In languages like C++ it will lead to overflowing the integer.
-But in Python it leads to more and more expensive arithmetic and as result Leetcode test fails even earlier that the first version.
+However, there is one flaw, at least in Python, as length of `p` grows, the hash grows as well and it leads to more expensive math operations.
 
 ```bash
 >>> timeit('50357543 * 9')
@@ -327,7 +308,7 @@ But in Python it leads to more and more expensive arithmetic and as result Leetc
 0.09212760000002618
 ```
 
-Anyhow, here are performance test results:
+[Leetcode](https://leetcode.com) test fails even earlier that the first version. But here are performance test results anyway:
 
 ```bash
 SolutionSort:      12.9363 sec
