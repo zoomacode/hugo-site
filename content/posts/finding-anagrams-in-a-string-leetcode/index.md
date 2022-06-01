@@ -3,6 +3,7 @@ title: "One Interesting Code Challenge from Leetcode: finding anagrams in a stri
 date: 2022-05-29T11:22:58-07:00
 draft: false
 author: Anton Golubtsov
+toc: true
 ---
 
 In my coding interviews I often use a simplified version of [this challenge from Leetcode](https://Leetcode.com/problems/find-all-anagrams-in-a-string/).
