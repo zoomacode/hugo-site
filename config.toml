@@ -1,4 +1,4 @@
-baseURL = 'http://zoomacode.net/'
+baseURL = 'https://chaotic.land/'
 languageCode = 'en-us'
 title = 'Chaotic thoughts'
 theme = "ananke"
@@ -30,7 +30,7 @@ enableEmoji = true
 
 [params]
     show_reading_time = true
-    site_logo = "static/logo.svg"
+    site_logo = "/favicon.png"
     mainSections = ['posts', 'book-reviews']
 
 
