@@ -31,10 +31,10 @@ class SolutionCount:
             return result
 
         p_len = len(p)
-        p_counter = Counter([s for s in p])
-        cur = Counter([ss for ss in s[:p_len]])
+        p_counter = Counter(p)
+        cur = Counter(s[:p_len])
         for i in range(len(s) - p_len + 1):
-            cur = Counter([ss for ss in s[i : i + p_len]])
+            cur = Counter(s[i : i + p_len])
             if cur == p_counter:
                 result.append(i)
 
@@ -48,8 +48,8 @@ class SolutionFastCount:
             return result
 
         p_len = len(p)
-        p_counter = Counter([s for s in p])
-        cur = Counter([ss for ss in s[:p_len]])
+        p_counter = Counter(p)
+        cur = Counter(s[:p_len])
         i = p_len - 1
         for i in range(len(p), len(s)):
             if cur == p_counter:
