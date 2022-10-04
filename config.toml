@@ -49,3 +49,8 @@ url = "https://www.linkedin.com/in/zoomacode/"
 [[params.ananke_socials]]
 name = "keybase"
 url = "https://keybase.io/zoomacode"
+
+[[params.ananke_socials]]
+name = "mastodon"
+url = "https://mastodon.social/@zoomacode"
+
