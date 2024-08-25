@@ -27,6 +27,13 @@ enableEmoji = true
   pre = "<i class='fa fa-heart'></i>"
   url = '/book-reviews/'
   weight = -110
+[[menu.main]]
+  identifier = 'Jobs To Be Done 47'
+  name = 'JTBD'
+  pre = "<i class='fa fa-heart'></i>"
+  url = '/Jobs To Be Done 47/'
+  weight = -110
+
 
 [params]
     show_reading_time = true
