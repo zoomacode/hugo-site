@@ -4,6 +4,7 @@ date: 2024-08-25T11:22:58-07:00
 draft: false
 author: Anton Golubtsov
 toc: true
+summary: bare minimum about the Jobs To Be Done framework
 ---
 
 JTBD: day one - how to make a product
