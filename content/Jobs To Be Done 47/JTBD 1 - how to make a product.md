@@ -6,6 +6,9 @@ author: Anton Golubtsov
 toc: true
 ---
 
+JTBD: day one - how to make a product
+---
+
 JTBD or Jobs To Be Done is a framework where we focus on the jobs the customer needs to complete in order to achieve something. For example, to complete a _"get some food supplies to stack them up"_ job, the customer may hire a solution "go to a supermarket", or "order only". For a job _"eat something when I'm hungry"_, the customer can hire one of the following jobs: "go to a grocery store and then cook themselves", "order food online", "go to a restaurant", "go a grab street food".
 
 Jobs can be organized as a graph. The job _"eat something when I'm hungry"_ is a higher level in comparison to _"get some food supplies to stack them up"_ which is a part of a solution where the customer first bring food home, and then on that day or a different day they will use those supplies to cook something to eat when they go hungry or they may cook in bulk so they eat pre-cooked food later.
