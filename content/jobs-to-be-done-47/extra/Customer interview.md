@@ -1,6 +1,6 @@
 ---
 title: "JTBD: B2B specifics"
-date: 2024-08-25T11:22:58-07:00
+date: 2024-08-22T11:22:58-07:00
 draft: false
 author: Anton Golubtsov
 toc: true

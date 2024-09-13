@@ -31,7 +31,7 @@ enableEmoji = true
   identifier = 'Jobs To Be Done 47'
   name = 'JTBD'
   pre = "<i class='fa fa-heart'></i>"
-  url = '/Jobs To Be Done 47/'
+  url = '/jobs-to-be-done-47/'
   weight = -110
 
 [params]

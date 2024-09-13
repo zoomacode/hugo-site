@@ -1,6 +1,6 @@
 ---
 title: "JTBD: reading list"
-date: 2024-08-25T11:22:58-07:00
+date: 2024-08-24T11:22:58-07:00
 draft: false
 author: Anton Golubtsov
 toc: true

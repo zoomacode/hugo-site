@@ -13,7 +13,9 @@ from https://zamesin.ru which I highly recommend as an software engineer who
 wanted to understand how to approach development of internal and not so much tools
 from the product stand point. The notes have a lot of "To Be Described" sections maybe I will add more content there or maybe will not.
 
-### Main topics
+Check [extra content for more](./extra/)
+
+<!-- ### Main topics
 
 1. [Day 1: how to make a product](./day-1-how-to-make-a-product/)
 1. [Day 2: Advanced Jobs To Be Done](./day-2-advanced-jobs-to-be-one/)
@@ -27,4 +29,4 @@ from the product stand point. The notes have a lot of "To Be Described" sections
 1. [Reading list](./extra/reading-list/)
 1. [Why people buy](./extra/why-people-buy/)
 1. [B2B specifics](./extra/b2b-specific/)
-1. [Customer interview](./extra/customer-interview/)
+1. [Customer interview](./extra/customer-interview/) -->
