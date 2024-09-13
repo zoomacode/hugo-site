@@ -1,0 +1,68 @@
+baseURL: 'https://chaotic.land/'
+languageCode: en-us
+title: Chaotic Thoughts
+theme: hugo-flex
+copyright: Anton Golubtsov
+description: A collection of random thoughts on random topics
+googleAnalytics: G-96GHV7J9Q8
+favicon: favicon.png
+enableEmoji: true
+
+menu:
+  main:
+    - identifier: about
+      name: About
+      pre: <i class='fa fa-heart'></i>
+      url: /about/
+      weight: -110
+    - identifier: posts
+      name: Posts
+      pre: <i class='fa fa-heart'></i>
+      url: /posts/
+      weight: -110
+    - identifier: book-review
+      name: Book reviews
+      pre: <i class='fa fa-heart'></i>
+      url: /book-reviews/
+      weight: -110
+    - identifier: Jobs To Be Done 47
+      name: JTBD
+      pre: <i class='fa fa-heart'></i>
+      url: /jobs-to-be-done-47/
+      weight: -110
+    - identifier: RSS
+      name: RSS
+      ref: /feed.xml
+      url: /feed.xml
+      params:
+        - format: rss
+
+params:
+  show_reading_time: true
+  site_logo: /favicon.png
+  mainSections:
+    - posts
+    - book-reviews
+  
+  twittercards: true
+  opengraph: true
+  schema: true
+
+  rss: /feed.xml
+
+  ananke_socials:
+    - name: twitter
+      url: 'https://twitter.com/zoomacode'
+    - name: github
+      url: 'https://github.com/zoomacode'
+    - name: linkedin
+      url: 'https://www.linkedin.com/in/zoomacode/'
+    - name: keybase
+      url: 'https://keybase.io/zoomacode'
+    - name: mastodon
+      url: 'https://mastodon.social/@zoomacode'
+
+outputFormats:
+  rss:
+    mediatype: application/rss+xml
+    baseName: feed      # Rename RSS feed URL from rss.xml to feed.xml
