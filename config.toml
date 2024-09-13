@@ -1,7 +1,7 @@
 baseURL = 'https://chaotic.land/'
 languageCode = 'en-us'
 title = 'Chaotic thoughts'
-theme = "ananke"
+theme = "hugo-flex"
 copyright = "Anton Golubtsov"
 description = "A collection of random thoughts on random topics"
 googleAnalytics = "G-96GHV7J9Q8"
@@ -34,12 +34,13 @@ enableEmoji = true
   url = '/Jobs To Be Done 47/'
   weight = -110
 
-
 [params]
     show_reading_time = true
     site_logo = "/favicon.png"
     mainSections = ['posts', 'book-reviews']
-
+    twittercards = true
+    opengraph = true
+    schema = true
 
 [[params.ananke_socials]]
 name = "twitter"
