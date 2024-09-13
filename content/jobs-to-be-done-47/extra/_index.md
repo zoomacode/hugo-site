@@ -6,4 +6,4 @@ author: Anton Golubtsov
 toc: true
 ---
 
-Just extra content on the topic
+Extra content on the topic
