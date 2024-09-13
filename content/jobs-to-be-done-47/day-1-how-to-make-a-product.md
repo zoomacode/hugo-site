@@ -7,8 +7,7 @@ toc: true
 summary: bare minimum about the Jobs To Be Done framework
 ---
 
-JTBD: day one - how to make a product
----
+## JTBD: day one - how to make a product
 
 JTBD or Jobs To Be Done is a framework where we focus on the jobs the customer needs to complete in order to achieve something. For example, to complete a _"get some food supplies to stack them up"_ job, the customer may hire a solution "go to a supermarket", or "order only". For a job _"eat something when I'm hungry"_, the customer can hire one of the following jobs: "go to a grocery store and then cook themselves", "order food online", "go to a restaurant", "go a grab street food".
 
@@ -20,7 +19,6 @@ JTBD explores who people interact with reality and tries to make those interacti
 -   People **hire** jobs to fulfill their needs
     -   People lie and do not realize their needs
     -   So don't ask people about the future or what they would need - they will lie or hallucinate
--   Ценность продукта это ROI
 -   Product value is `benefits - cost`
 -   You need to think in terms of graph changes and derive features from there
 -   Consciousness is a needs consensus protocol which acts like an investors. It looks at the available options and picks the best option in terms of ROI.
