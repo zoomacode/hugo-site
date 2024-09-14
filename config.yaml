@@ -3,7 +3,7 @@ languageCode: en-us
 title: Chaotic Thoughts
 theme: hugo-flex
 copyright: Anton Golubtsov
-description: A collection of random thoughts on random topics
+description: A collection of random thoughts on random topics from software engineering to mushrooms
 googleAnalytics: G-96GHV7J9Q8
 favicon: favicon.png
 enableEmoji: true
@@ -47,6 +47,7 @@ params:
   linkicons: true
   twittercards: true
   opengraph: true
+  summaries: true
   schema: true
   rss: /feed.xml
   utterances:
