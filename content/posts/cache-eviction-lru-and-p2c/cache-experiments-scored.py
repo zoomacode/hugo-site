@@ -11,7 +11,7 @@ class RandomCache:
     def contains(self, request: int) -> bool:
         return request in self.cache
 
-    def add(self, request: int):
+    def add(self, request: int, _: int):
         if len(self.cache) == self.capacity:
             random_choice = random.choice(list(self.cache))
             self.cache.remove(random_choice)
@@ -31,7 +31,7 @@ class LruCache:
 
         return res
 
-    def add(self, request: int):
+    def add(self, request: int, _: int):
         if len(self.cache) == self.capacity:
             self.cache.pop()
         self.cache.add(request)
@@ -47,18 +47,18 @@ class PNcCache:
     def contains(self, request: int) -> bool:
         res = request in self.cache
         if res:
-            self.cache[request] = self.counter
+            self.cache[request][0] = self.counter
             self.counter += 1
         return res
 
-    def add(self, request: int):
+    def add(self, request: int, value: int):
         if len(self.cache) == self.capacity:
-            choices = list(self.cache.keys())
+            choices = list(self.cache.items())
             choices = list(random.choices(choices, k=self.num_choices))
-            to_evict = min(choices, key=self.cache.get)
-            del self.cache[to_evict]
+            to_evict = min(choices, key=lambda x: x[1][0] + abs(x[1][1]))
+            del self.cache[to_evict[0]]
 
-        self.cache[request] = self.counter
+        self.cache[request] = [self.counter, value]
         self.counter += 1
 
 
@@ -81,7 +81,7 @@ def generate_query_weights(n: int) -> list[float]:
 
 import matplotlib.pyplot as plt
 
-images_suffix = "latency"
+images_suffix = "scored"
 
 
 def plot_weights_histogram(weights: list[float]):
@@ -112,21 +112,32 @@ def print_distribution_of_query_ids(requests: list[int]):
     plt.savefig(f"images/query-ids-distribution-{images_suffix}.png")
 
 
+request_scores = {}
+
+
+def get_score(request):
+    global request_scores
+    return request_scores.setdefault(request, random.normalvariate(10000, 10000))
+
+
 def run_experiment(requests: list[int], cache, warmup=0.1):
     warmup_size = int(len(requests) * warmup)
     for request in requests[:warmup_size]:
-        cache.add(request)
+        score = get_score(request)
+        cache.add(request, score)
 
     use_requests = requests[:warmup_size]
     hits = 0
     misses = 0
     for request in use_requests:
+        score = get_score(request)
         if cache.contains(request):
-            hits += 1
+            hits += score
         else:
-            misses += 1
-            cache.add(request)
-    return hits / len(use_requests) * 100.0, misses / len(use_requests) * 100.0
+            misses += score
+            cache.add(request, score)
+    total = hits + misses
+    return hits / total * 100.0, misses / total * 100.0
 
 
 def main():
@@ -156,7 +167,9 @@ def main():
         lru_hits, _ = run_experiment(requests, LruCache(cache_size))
         p2c_hits, _ = run_experiment(requests, PNcCache(cache_size, 2))
         p3c_hits, _ = run_experiment(requests, PNcCache(cache_size, 3))
-        print("Results:", random_hits, lru_hits, p2c_hits, p3c_hits)
+        print(
+            f"Results: random:{random_hits}, lru:{lru_hits} p2c:{p2c_hits}, p3c:{p3c_hits}"
+        )
 
         results.append((c, random_hits, lru_hits, p2c_hits, p3c_hits))
 
