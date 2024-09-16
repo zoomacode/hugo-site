@@ -1,7 +1,7 @@
 ---
 title: "High Tech Energy (Attention) Vampires and their spiral of death and destruction"
 date: 2024-09-15T15:21:08-07:00
-draft: true
+draft: false
 author: Anton Golubtsov
 summary:
 ---
@@ -14,8 +14,6 @@ seeking for my attention.
 
 ---
 
-Before we continue let's define what "energy vampire" is:
-
 > An “energy vampire” is a person who leaves you feeling depleted both emotionally and mentally after you’ve spent time with them. It’s not a clinical term, but more a colloquial shorthand used to describe a kind of person who drains your energy. And it’s not quite as mysterious as it sounds.
 
 From [calm.com](https://www.calm.com/blog/energy-vampire). There is also a nice list
@@ -24,7 +22,20 @@ of energy vampire traits, and symptoms of an exposure to a such creature includi
 
 ---
 
-Now we can a definitions. High-tech companies are a little bit different from humans in that regard.
-It often starts slowly as a harmless business, blogs, website so you may no notice any problems in the beginning. And in addition the conversion into a vampire may have different nature or motivation that makes the process is even harder to notice.
+_Here was a large chunk about the history behind it, reasons, and psychology.
+But it was so overly confident, and boring piece of writing that I deleted it... I'm grad I did it._
 
-#### How its started.
+High-tech companies are a little bit different from humans but the point remains.
+Sooner or later they becomes just another way to distract you for life.
+
+Today, I've added a few more names to my very personal list of vampires.
+Substack which defines itself as "The home for great culture" and a few Telegram channels.
+
+The Substack app, following the path of the pioneers of attention eaters like Facebook, Instagram, and Twitter, was deleted from my phone and unsubscribed from a few authors there since they we bombarding my email during the night so I can see they writing first in the morning. In Telegram I moved to Archive a few channels.
+
+The good part is that with each iteration it is easier to recognize the dark patterns
+and be more intentional about where my attention is going.
+
+I'm grateful for the lesson though :)
+
+**PS:** State sane, safe, and sound. Cheers y'all.
