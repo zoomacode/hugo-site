@@ -1,5 +1,5 @@
 ---
-title: "High Tech Energy (Attention) Vampires and their spiral of death and destruction"
+title: "High Tech Energy (Attention) Vampires"
 date: 2024-09-15T15:21:08-07:00
 draft: false
 author: Anton Golubtsov
