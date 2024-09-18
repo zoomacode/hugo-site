@@ -7,7 +7,7 @@ summary:
 ---
 
 Recently I was reading though a bunch of technical designs and I've noticed a common mistake when it comes to 
-writing user-stories and requirements - assuming a solution. The biggest issue for me when I write requirements myself is that than whenever I include a part of a solution I'm thingking about into the requirements it limits my ability to innovate since I'm bound to a specific solution. In many cases I observed improvements in my designs when I was focused on what the customer needs rather on fulfilling requirement tied to my first and probably not bright idea.
+writing user-stories and requirements - assuming a solution. The biggest issue for me when I write requirements myself is that than whenever I include a part of a solution I'm thingking about into the requirements it limits my ability to innovate since I'm bound to a specific solution. In many cases I observed improvements in my designs when I was focused on what the customer needs rather on fulfilling requirement tied to my first and probably not a bright idea.
 
 Another advantage of not assuming a solution, at least for me, that it helps me to include a broader context and consider the customer needs a few steps before, after, and the customer is trying to achieve at a higher level. This sometimes completely changes the way I think about the problem.
 
