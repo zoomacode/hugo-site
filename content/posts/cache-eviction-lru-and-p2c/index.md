@@ -30,8 +30,10 @@ LRU, and p2c clearly tries to pick least frequent or least probable to reappear
 requests saving space for more frequent requests and so removing more
 load from the service behind it.
 
-LRU picks the least frequent request by actively picking the least frequent query.
-P2c does it by picking the worst out of two which average equivalent to picking the least frequent request as well it is just a bit less obvious. But random, why is it added next to LRU?
+LRU actively picks the least frequent query.
+P2c does similar selection by picking the worst out of two which average equivalent to picking the least frequent request as well it is just a bit less obvious. But random, why is it added next to LRU?
+
+**Note**: MRU and LRU are quite close to each other so we could use MRU as well but we will ingore it since it will add more compexity without adding much value.
 
 The thing is that in the random cache eviction policy, each request in a cache has
 equal chance to be evicted. However, probability to be added back depends on query
