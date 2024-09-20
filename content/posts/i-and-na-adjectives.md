@@ -4,6 +4,9 @@ date: 2024-02-18T23:15:20-07:00
 draft: false
 author: Anton Golubtsov
 summary: There are two types of adjectives i and na and .... some peculiarities.
+tags:
+    - japanese
+    - random
 ---
 
 I’m not an expert in Japanese phonetics just love to learn new things like …. you know Japanese. So it is just how I perceive the language. Also everything is simplified to the level when it can be understood by everyone.

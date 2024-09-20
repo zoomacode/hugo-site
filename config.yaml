@@ -1,5 +1,6 @@
 baseURL: 'https://chaotic.land/'
 languageCode: en-us
+defaultContentLanguage: en
 title: Chaotic Thoughts
 theme: hugo-flex
 copyright: Anton Golubtsov
@@ -7,6 +8,15 @@ description: A collection of random thoughts on random topics from software engi
 googleAnalytics: G-96GHV7J9Q8
 favicon: favicon.png
 enableEmoji: true
+
+taxonomies:
+  tag: tags
+
+languages:
+  en:
+    disabled: false
+  ru:
+    disabled: false
 
 menu:
   main:
@@ -25,6 +35,11 @@ menu:
       pre: <i class='fa fa-heart'></i>
       url: /book-reviews/
       weight: -110
+    # - identifier: tags
+    #   name: Tags
+    #   pre: <i class='fa fa-heart'></i>
+    #   url: /tags/
+    #   weight: -110
     - identifier: Jobs To Be Done 47
       name: JTBD
       pre: <i class='fa fa-heart'></i>
