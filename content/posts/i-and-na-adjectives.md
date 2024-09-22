@@ -3,11 +3,13 @@ title: "い (i/e) and な(na) - adjectives in Japanese"
 date: 2024-02-18T23:15:20-07:00
 draft: false
 author: Anton Golubtsov
-summary: There are two types of adjectives i and na and .... some peculiarities.
+summary:
 tags:
     - japanese
     - random
 ---
+
+_There are two types of adjectives i and na and .... some peculiarities._
 
 I’m not an expert in Japanese phonetics just love to learn new things like …. you know Japanese. So it is just how I perceive the language. Also everything is simplified to the level when it can be understood by everyone.
 
@@ -17,3 +19,5 @@ I-adjective example: _kawaii neko_ (a cute cat) → present and future: _kawaii 
 Now let have a look at a polite form of na-adjectives: _majime neko_ (serious) → present and future: _majimena neko desu_ (it is serious) → negative present and future: _majimena neko dewa arimasen_ (it is not serious) → past: majimena neko deshita (it was serious) → negative past: _majimena neko dewa arimasen deshi_ (serious). Now only the auxiliary verb changes like it would for nouns.
 It was the intro part now the interesting part. There are na-adjectives that look like i-adjectives in their written form for example _kirei_ (clean). However, that i disappears in pronunciation. Depends on how your prior experience you may perceive that last i as e or like y in York. The expert say that it is actually e sound and I’m not one of them.
 That is all folks. See you.
+
+_Originally posted here_: https://antongolubtsov.substack.com/p/ie-and-na-adjectives-in-japanese
