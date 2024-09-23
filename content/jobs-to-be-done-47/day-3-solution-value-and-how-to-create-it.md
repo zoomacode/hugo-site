@@ -4,6 +4,8 @@ date: 2024-08-23T11:22:58-07:00
 draft: false
 author: Anton Golubtsov
 toc: true
+tags:
+    - jtbd
 ---
 
 Solution value can be defined as a difference between perceived benefits provided by a solution and perceived costs associated with a solution. In addition to that there can be a perceived cost of switching to the solution. We use "perceived" here since there is usually a gap between reality and perception and value is in the eye of the beholder.

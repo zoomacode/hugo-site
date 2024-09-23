@@ -5,6 +5,8 @@ summary: I've just finished reading the first part of the Fluent Python book and
 draft: false
 author: Anton Golubtsov
 toc: true
+tags:
+    - reading
 ---
 
 ## Intro

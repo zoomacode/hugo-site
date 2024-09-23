@@ -5,6 +5,8 @@ draft: false
 author: Anton Golubtsov
 toc: true
 summary: bare minimum about the Jobs To Be Done framework
+tags:
+    - jtbd
 ---
 
 ## JTBD: day one - how to make a product

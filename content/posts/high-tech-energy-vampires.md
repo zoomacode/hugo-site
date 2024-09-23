@@ -4,6 +4,7 @@ date: 2024-09-15T15:21:08-07:00
 draft: false
 author: Anton Golubtsov
 summary:
+tags:
     - Bit Tech
     - Big Brother
     - Random

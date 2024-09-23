@@ -4,6 +4,9 @@ date: 2024-08-24T11:22:58-07:00
 draft: false
 author: Anton Golubtsov
 toc: true
+tags:
+    - reading
+    - jtbd
 ---
 
 #### Strategy and business value

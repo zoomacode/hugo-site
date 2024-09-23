@@ -5,6 +5,8 @@ draft: false
 summary: The second part of the book focuses on different callables. You will know about type hints for Callables, protocols, closures, decorators and other related things.
 author: Anton Golubtsov
 toc: true
+tags:
+    - reading
 ---
 
 ## Intro
