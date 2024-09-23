@@ -41,19 +41,21 @@ You can use [OODA (observe, orient, decide, act) loop - Wikipedia](https://en.wi
 
 ##### 1 - fix a broken job
 
-#tbd
+_This and next two are about similar problems at different scale._
+
+If something just does not work at all there is no way it can be used. Hence there is no value in the solution. Fix it.
 
 ##### 2 - fix problems in a job
 
-#tbd
+Broken processes, and paper-cuts eat the product value like a pack of wolfs who found a deer after a week of hunger. This is the next thing you need to fix in your product.
 
 ##### 3 - provide base/minimal quality
 
-#tbd
+You need to provide some minimal quality to make you product work. Everything should just work and do not fall apart. It does not have to be good. It has to be acceptable.
 
 ##### 4 - eliminate lower level jobs
 
-For example, to select a personal WiFi hotstop on Mac.
+For example, to select a personal WiFi hotspot on Mac.
 
 -   Before: take a phone, open the settings menu, enable a hotspot, open wifi settings on a laptop, enter password
 -   After: select your phone in a drop down menu

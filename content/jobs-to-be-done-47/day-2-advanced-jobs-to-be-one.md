@@ -55,6 +55,6 @@ A new job can be activate when the user receives activation knowledge through di
 
 #### A few more things
 
--   higher-level jobs usually associated with higher level needs (see more: [[Why people buy]]) we can use that knowledge in how we communicate the product value
+-   higher-level jobs usually associated with higher level needs (see more: [Why people buy](/extra/why-people-by/)) we can use that knowledge in how we communicate the product value
 -   lower-level jobs less connected to the basic needs and so we talk more about features in our communication.
 -   you may face unusual competitors like the user can be your competitors due to their habits or other factors
