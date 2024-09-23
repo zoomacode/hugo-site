@@ -8,6 +8,8 @@ toc: true
 
 ## Advanced Jobs To Be Done
 
+**Disclaimer:** it was not intended to be a guide on A-JTBD so it you are looking were to start, https://builtin.com/articles/jobs-to-be-done-framework can be a better option.
+
 This is a collection of my notes I took during a product management crush course
 from https://zamesin.ru which I highly recommend as an software engineer who
 wanted to understand how to approach development of internal and not so much tools
