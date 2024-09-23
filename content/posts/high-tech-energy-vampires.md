@@ -4,6 +4,9 @@ date: 2024-09-15T15:21:08-07:00
 draft: false
 author: Anton Golubtsov
 summary:
+    - Bit Tech
+    - Big Brother
+    - Random
 ---
 
 It is interesting to observe that any endeavor where attention is one of key metrics or key drivers.
@@ -39,6 +42,7 @@ and be more intentional about where my attention is going.
 I'm grateful for the lesson though :)
 
 #### Update
+
 I have to admit that I'm the part of the problem since I tend to subscribe to a lot of interesting
 things at once and then I don't have bandwidth to handle all incoming updates.
 Treating subscriptions as bookmarks rather than a call for immediate read eliminated the discontent.

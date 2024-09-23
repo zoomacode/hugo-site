@@ -4,6 +4,8 @@ date: 2024-09-18T09:03:53-07:00
 draft: false
 author: Anton Golubtsov
 summary:
+    - Software Development
+    - Product Management
 ---
 
 Recently I was reading though a bunch of technical designs and I've noticed a common mistake when it comes to
