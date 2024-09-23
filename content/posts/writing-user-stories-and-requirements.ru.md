@@ -4,6 +4,7 @@ date: 2024-09-18T09:03:53-07:00
 draft: false
 author: Anton Golubtsov
 summary:
+tags:
     - Software Development
     - Product Management
 ---

@@ -4,6 +4,9 @@ date: 2024-09-15T10:22:58-07:00
 draft: false
 author: Anton Golubtsov
 toc: true
+tags:
+    - Software Development
+    - Cache
 ---
 
 Every so often I interview senior software engineers for Amazon. Where I ask more or less same questions in
