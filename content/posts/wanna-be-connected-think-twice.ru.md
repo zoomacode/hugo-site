@@ -1,7 +1,7 @@
 ---
-title: "Want to be connected? Think twice."
+title: "Хочешь быть всегда на связи? Подумай еще раз."
 date: 2024-03-02T13:19:20-07:00
-draft: true
+draft: false
 author: Anton Golubtsov
 summary:
 tags:
@@ -28,4 +28,4 @@ _В последние несколько лет компании пытаютс
 
 ЗЫ: текст переведён с английского одной известной жэпетишкой.
 
-_Originally posted here:_ https://antongolubtsov.substack.com/p/want-to-be-connected-think-twice
+_Изначально опубликовано на Substack:_ https://antongolubtsov.substack.com/p/want-to-be-connected-think-twice

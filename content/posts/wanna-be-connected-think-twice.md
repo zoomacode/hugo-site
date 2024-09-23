@@ -1,7 +1,7 @@
 ---
 title: "Want to be connected? Think twice."
 date: 2024-03-02T13:19:20-07:00
-draft: true
+draft: false
 author: Anton Golubtsov
 summary:
 tags:
