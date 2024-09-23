@@ -33,7 +33,7 @@ Product Strategy is answering the question: _what jobs are we going to do in the
 
 You can use [OODA (observe, orient, decide, act) loop - Wikipedia](https://en.wikipedia.org/wiki/OODA_loop) when you think about a strategy. In OODA you need to spend at least 80% time in observe and orient.
 
-**Algorithm:** check [[JTBD 3 - solution value and how to create it#An algorithm for solving business problems with a product]]
+**Algorithm:** [JTBD 3 - solution value and how to create it](/day-3-solution-value-and-how-to-create-it/#an-algorithm-for-solving-business-problems-with-a-product)
 
 **Read:** [Amazon.com: Good Strategy Bad Strategy: The Difference and Why It Matters eBook : Rumelt, Richard: Kindle Store](https://www.amazon.com/Good-Strategy-Bad-Difference-Matters-ebook/dp/B004J4WKEC/)
 
