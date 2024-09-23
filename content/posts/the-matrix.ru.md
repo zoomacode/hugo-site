@@ -1,5 +1,5 @@
 ---
-title: "The Matrix: A Simulation, a Game, Reincarnation, or Hallucination?"
+title: "Матрица: Симуляция, Игра, Реинкарнация или Галлюцинация?"
 date: 2024-03-09T17:38:57-07:00
 draft: false
 author: Anton Golubtsov
