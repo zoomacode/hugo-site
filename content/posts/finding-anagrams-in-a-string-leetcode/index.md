@@ -7,6 +7,7 @@ toc: true
 tags:
     - Software Development
     - Code Challenges
+    - Interview
 ---
 
 In my coding interviews I often use a simplified version of [this challenge from Leetcode](https://Leetcode.com/problems/find-all-anagrams-in-a-string/).
