@@ -59,3 +59,5 @@ This is particularly interesting part since it can be an indication that the can
 In some cases, yes/no questions may have looser constrains. For example, it could be ok have false positive answers but false negatives can be completely unacceptable in that case we can use Bloom filters.
 
 For example, we know that let's say 50% of requests will give `False`. In that case we can use a Bloom filter to drop those hard nos. And then we use an LRU cache for the rest of the traffic making the cache 2x more efficient.
+
+Another way to use bloom filters for caching: https://en.wikipedia.org/wiki/Bloom_filter#Cache_filtering the whole page is quite interesting reading.
