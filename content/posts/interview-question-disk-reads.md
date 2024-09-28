@@ -33,7 +33,7 @@ The main reason is that the question allows to evolve the conversation in multip
 Memoization is one of the most frequent responses and in many cases people suggest LRU cache as a way to implement memorization. There are a few things the candidate can do to stand out:
 
 1. instead of implementing an LRU cache, which simple but annoyingly wordy with bunch of corner case if you want to implement everything including linked lists, the candidate can just suggest using the standard libraries, for example Python has built-in LRU cache as a decorator.
-1. suggest to use a random or p2c cache eviction policy since they have quite close performance in real life applications.
+1. suggest to use a random or p2c cache eviction policy since they have quite close performance in real life applications. See: [comparison of cache eviction policies](./cache-eviction-lru-and-p2c/)
 
 **Level 2: streaming**
 Even though it is mentioned in the task, people often ignore streaming. I've asked a few candidates how they would implement the concept of streams and lazy evaluation in their language and often the candidates couldn't answer.
