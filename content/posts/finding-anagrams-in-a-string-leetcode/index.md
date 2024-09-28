@@ -325,6 +325,8 @@ SolutionOs2:       0.0089 sec (-10.81% improvement)
 SolutionHash:      0.3288 sec (3607.15% degradation)
 ```
 
+**None:** `SolutionHash` is slower than optimal but it is still ~24.5x faster than `SolutionCount`.
+
 ## Conclusion
 
 There is not much to conclude really. I just wanted to show how I was solving the challenging step by step when I found it for the first time. And it was also interesting to observe how the performance improves from small changes while I was writing the post.
