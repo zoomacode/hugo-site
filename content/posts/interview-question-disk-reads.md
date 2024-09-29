@@ -1,5 +1,5 @@
 ---
-title: "An Interview Question about Optimization of Disk Read costs"
+title: "An Interview Question: Optimization of Disk Read costs"
 date: 2024-09-24T17:27:24-07:00
 draft: false
 author: Anton Golubtsov
