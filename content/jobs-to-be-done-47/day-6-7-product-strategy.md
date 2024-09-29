@@ -64,7 +64,11 @@ For example, to select a personal WiFi hotspot on Mac.
 
 ##### 5 - do more jobs of a customer using one solution
 
-#tbd
+A device you are using to read this text is a great example. 
+The more jobs can be done using the same solution the more value it give.
+In addition the solution can become a default mode for the user to the level that pain of switching to a new solution is too high.
+But it does mean that you need to employ dark patterns to increase the price of switching. Sometimes you need to show that
+switch is easy this can attract new users who are hesitant to try due to the costs of switching.
 
 ##### 6 - do next job
 
