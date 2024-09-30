@@ -6,3 +6,6 @@ author: Anton Golubtsov
 ---
 
 A short intro on retries for http endpoints
+
+#### Diffent use-cases
+#### queues 
