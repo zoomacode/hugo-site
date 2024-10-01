@@ -111,10 +111,14 @@ To show how different strategies perform I've wrote a short [test](./shards.py).
 
 As we can see consistent hashing indeed gives least even data distribution but it keeps assigned shards relatively stable. I hope it will help someone to decided what is best for their use-case. For me, it was an exercise in brushing up the forgotten knowledge.
 
+### References
+
+1. [Consistent hashing algorithm](https://highscalability.com/consistent-hashing-algorithm)
+1. [A Fast, Minimal Memory, Consistent Hash Algorithm](https://arxiv.org/pdf/1406.2294)
+1. [Consistent hashing and random trees: Distributed caching protocols for relieving hot spots on the World Wide Web](https://www.cs.princeton.edu/courses/archive/fall09/cos518/papers/chash.pdf)
+1. [Fibonacci Hashing: The Optimization that the World Forgot (or: a Better Alternative to Integer Modulo)](https://probablydance.com/2018/06/16/fibonacci-hashing-the-optimization-that-the-world-forgot-or-a-better-alternative-to-integer-modulo/)
+1. [Fibonacci Hashing from Data Structures and Algorithms with Object-Oriented Design Patterns in C++ by Bruno R. Preiss](https://book.huihoo.com/data-structures-and-algorithms-with-object-oriented-design-patterns-in-c++/html/page214.html)
+1. [Scrambling Eggs for Spotify with Knuth's Fibonacci Hashing](https://pncnmnp.github.io/blogs/fibonacci-hashing.html)
+1. [Rendezvous Hashing](https://en.wikipedia.org/wiki/Rendezvous_hashing)
+
 [^1]: [Consistent hashing algorithm](https://highscalability.com/consistent-hashing-algorithm)
-[^2]: [A Fast, Minimal Memory, Consistent Hash Algorithm](https://arxiv.org/pdf/1406.2294)
-[^3]: [Consistent hashing and random trees: Distributed caching protocols for relieving hot spots on the World Wide Web](https://www.cs.princeton.edu/courses/archive/fall09/cos518/papers/chash.pdf)
-[^4]: [Fibonacci Hashing: The Optimization that the World Forgot (or: a Better Alternative to Integer Modulo)](https://probablydance.com/2018/06/16/fibonacci-hashing-the-optimization-that-the-world-forgot-or-a-better-alternative-to-integer-modulo/)
-[^5]: [Fibonacci Hashing from Data Structures and Algorithms with Object-Oriented Design Patterns in C++ by Bruno R. Preiss](https://book.huihoo.com/data-structures-and-algorithms-with-object-oriented-design-patterns-in-c++/html/page214.html)
-[^6]: [Scrambling Eggs for Spotify with Knuth's Fibonacci Hashing](https://pncnmnp.github.io/blogs/fibonacci-hashing.html)
-[^7]: [Rendezvous Hashing](https://en.wikipedia.org/wiki/Rendezvous_hashing)
