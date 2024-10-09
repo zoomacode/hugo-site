@@ -7,5 +7,10 @@ author: Anton Golubtsov
 
 A short intro on retries for http endpoints
 
-#### Diffent use-cases
-#### queues 
+### Client side
+
+### Server side
+
+#### Different use-cases
+
+#### Queues
