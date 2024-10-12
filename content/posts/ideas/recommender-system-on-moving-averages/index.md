@@ -27,7 +27,7 @@ I didn't want to spend to much time on it so I decided to use a simple of the sh
 
 1. [Ollama](https://ollama.com) + `nomic-embed-text`
 1. [Faiss](https://faiss.ai) for HNSW
-1. [A movies dataset from Cohere](https://huggingface.co/datasets/Cohere/movies) - was found by something like "embeddings dataset" in Google.
+1. [A movies dataset from Cohere](https://huggingface.co/datasets/Cohere/movies) - I found it by something like "embeddings dataset" in Google.
 1. Numpy, Pandas etc to
 
 **The algorithm**:
@@ -181,7 +181,13 @@ Enter a movie title: show
 +----------------------------------+----------------------------+
 ```
 
-### Conclusion
+#### Conclusion
 
 The theory that we can use EMA as a way to build user based recommendation without storing history of searches is confirmed.
 In addition to that, a bucket based randomness seems to be a good exploration mechanism.
+
+#### The dataset
+
+[A movies dataset from Cohere](https://huggingface.co/datasets/Cohere/movies)
+
+![](./src/dataset.png)
