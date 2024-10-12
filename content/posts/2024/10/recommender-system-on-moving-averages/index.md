@@ -1,5 +1,5 @@
 ---
-title: "Recommender System on HNSW and Exponential Moving Averages"
+title: "Recommendation System on HNSW and Exponential Moving Averages"
 date: 2024-10-11T21:29:10-07:00
 draft: false
 author: Anton Golubtsov
