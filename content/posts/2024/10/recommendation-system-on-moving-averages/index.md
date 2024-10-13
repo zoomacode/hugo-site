@@ -11,7 +11,7 @@ tags:
 
 #### Intro
 
-I was reading the original paper on "Hierarchical Navigable Small Worlds (HNSW)" https://arxiv.org/abs/1603.09320 which I found much easier to understand than all those YouTube videos I tried to watch and articles to read. Back to the topic, HNSW is a probabilistic data structure for searching neighbors in multi-dimensional space.
+I was reading the original paper on "Hierarchical Navigable Small Worlds (HNSW)" https://arxiv.org/abs/1603.09320 which I found much easier to understand than all those YouTube videos I tried to watch and articles to read. HNSW is a probabilistic data structure for searching neighbors in multi-dimensional space.
 One of practical applications is search of semantically close objects. Reading that paper and some other activities made me curious if I can quickly implement a recommendation system which combines three things: HNSW, moving averages, and randomness.
 
 One more challenge I want to add is not to use any tutorials and try to pull everything together using the knowledge I have, except for the documentation for libraries.
