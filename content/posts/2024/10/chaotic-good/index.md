@@ -8,8 +8,6 @@ tags:
     - Thoughts
 ---
 
-# Chaotic good
-
 A few days ago a manager from a sister team asked me why I have “Chaotic good” in that field “What I do” of my work profile. The question now occupies my mind so I need to drain it into something.
 
 In short, it is a silly meme from a few years ago as I decided to use as a work motto instead of “stupidity and courage” as I fell that the new one better reflects the type of work was doing at the time.
