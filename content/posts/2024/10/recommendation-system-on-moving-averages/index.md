@@ -20,54 +20,148 @@ One more challenge I want to add is not to use any tutorials and try to pull eve
 
 I didn't want to spend to much time on it so I decided to use a simple of the shelf components but not too complex too leave room for learning. The main ideas were:
 
-1. an exponential moving average across selected by the user results should work just fine as a way to build a user recommendations profile.
+1. we can use an exponential moving average across selected by the user results as a way to build a user profile for recommendations.
 1. by adding noise to the user profile, we can implement an exploration mode almost for free.
 
-**The ingredients**:
+To build a recommendation system, I decided to use the following ingredients:
 
-1. [Ollama](https://ollama.com) + `nomic-embed-text`
-1. [Faiss](https://faiss.ai) for HNSW
-1. [A movies dataset from Cohere](https://huggingface.co/datasets/Cohere/movies) - I found it by something like "embeddings dataset" in Google.
-1. Numpy, Pandas etc to
+1. [A movies dataset from Cohere](https://huggingface.co/datasets/Cohere/movies) as a collection on movies to choose from.
+1. [Ollama](https://ollama.com) + `nomic-embed-text` to generate embeddings for movies
+1. [Faiss](https://faiss.ai) for HNSW semantic search.
 
-**The algorithm**:
+The whole process is quite straight forward:
 
--   Download dataset
--   Generate embeddings
+First we download the dataset
+
+```python
+df = pd.read_parquet("hf://datasets/Cohere/movies/movies.parquet")
+```
+
+Then we generate embeddings using Ollama and `nomic-embed-text` model
 
 ```python
 def apply_embedings(row):
     prompt = str(row.to_dict())
     emb = ollama.embeddings(
         model="nomic-embed-text",
-        # model="snowflake-arctic-embed",
         prompt=prompt,
     )
-    # print(prompt, emb)
     return emb["embedding"]
+
+tqdm.pandas()
+df["embedding"] = df.progress_apply(apply_embedings, axis=1)
 ```
 
--   Build HNSW index
+From the embeddings we build HNSW index and initial user profile:
 
 ```python
+    # building input for the index which requires a continues piece of memory
+    # so numpy comes in handy.
     raw_embs = np.zeros((len(embs), len(embs["embedding"].values[0])), dtype=np.float32)
     for i, (_, row) in enumerate(embs.iterrows()):
         raw_embs[i] = row["embedding"]
 
+    # building index
     dimension = raw_embs.shape[1]
     data_size = raw_embs.shape[0]
-
     index = faiss.IndexHNSWFlat(dimension, data_size)
     index.add(raw_embs)
+
+    # preparing data for building a user profile
+    avg_emb = raw_embs.mean(axis=0)
+    min_emb = raw_embs.min(axis=0)
+    max_emb = raw_embs.max(axis=0)
+    avg_emb.tofile("average_embedding.bin")
+    min_emb.tofile("min_embedding.bin")
+    max_emb.tofile("max_embedding.bin")
+
+    faiss.write_index(index, "movies.index")
 ```
 
--   Use average across all embeddings as initial user profile
--   Compute embedding for a search request
--   Search and give the user an option to select a movie
--   Update the user profile by the embeddings from the selected movie using EMA.
--   Repeat
+Implementation of the search logic is pretty straight forward:
 
-Documentation for Faiss library was the hardest part. The rest was pretty straight forward especially with Copilot enabled.
+```python
+def search(index, query: str, top_k: int = 5):
+    emb = apply_embedings(pd.Series({"title": query}))
+    D, I = index.search(np.array([emb]), top_k)
+    return D, I
+```
+
+Then we ask the user to pick one of the movies and then we update user profile by applying EMA to each embedding:
+
+```python
+def update_avg_embeddings(pre_emb: np.array, new_emb: np.array, n: int = 8):
+    return (pre_emb * n + new_emb) / (n + 1)
+....
+....
+user_emb = update_avg_embeddings(
+            user_emb, embs.iloc[I[0][int(movie_id - 1)]]["embedding"], n
+        )
+```
+
+To generate recommendations we use the same logic as for search but using the user profile as search request:
+
+```python
+def get_recommenations(raw_emb: np.array, index, top_k: int = 5):
+    D, I = index.search(np.array([raw_emb]), top_k)
+    return D, I
+
+
+D, I = get_recommenations(user_emb, index)
+```
+
+For exploratory recommendations we use the same user profile but with added noise:
+
+```python
+def randmoize_embedding(emb: np.array, percent_of_change: float = 0.25):
+    noise = np.random.normal(1, 1 + percent_of_change, emb.shape)
+    negative = random.choice([True, False])
+    if negative:
+        noise = -noise
+
+    return emb + noise
+
+
+def randomize_embedding_with_min_max(
+    emb: np.array, min_emb: np.array, max_emb: np.array, percent_of_change: float = 0.1
+):
+    """It selects a percent of buckets in an embedding and randomizes them within the min and max embedding values"""
+    new_emb = emb.copy()
+    buckets_to_change = random.choices(
+        range(emb.shape[0]), k=int(emb.shape[0] * percent_of_change)
+    )
+    noise = np.random.uniform(min_emb, max_emb, emb.shape)
+    new_emb[buckets_to_change] = noise[buckets_to_change]
+    return new_emb
+
+
+random_noise_emb = randmoize_embedding(user_emb)
+random_bucket_emb = randomize_embedding_with_min_max(user_emb, min_emb, max_emb)
+
+
+D, I = get_recommenations(random_noise_emb, index)
+rec_noise_msg = print_recommenations("Recommendations (noise):", embs, I)
+
+D, I = get_recommenations(random_bucket_emb, index)
+rec_bucket_noise_msg = print_recommenations("Recommendations (buckets):", embs, I)
+```
+
+That it pretty much it.
+
+#### Areas of improvements
+
+The main disadvantage that we added the selected movie to the user profile which may lead to generating recommendations which are close to the watch history of the user.
+To mitigate the problem I would try to use a selected movie to find movies close to it and then either use different combinations of them for example:
+
+1. use the next closest movie
+1. compute average closest neighbors
+1. use weighted average instead of just average or maybe "Gaussian average"
+
+Another area I would experiment with is to make recommendations be time aware so we don't show the user things they may not be interested it any more in the case when the user uses visits quite infrequently with large time gaps between visits. In that case, a temporal decay can be a better option. See: [Moving Averages]({{< ref "/posts/2024/10/moving-averages" >}} "Moving Averages")
+
+The third thing is to show the user different option type of recommendations and see what they will pick.
+
+You can also try with different approaches to introduce exploration.
 
 #### Testing
 
