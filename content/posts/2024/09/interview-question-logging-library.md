@@ -1,5 +1,5 @@
 ---
-title: "Interview Question: Logging Library"
+title: "Interview Question: logs parsing library"
 date: 2024-09-29T17:30:06-07:00
 draft: false
 author: Anton Golubtsov
