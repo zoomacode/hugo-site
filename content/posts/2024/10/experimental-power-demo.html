@@ -1,0 +1,195 @@
+---
+title: "Experimental Power Demo"
+date: 2024-10-31T17:51:01-07:00
+draft: false
+author: Anton Golubtsov
+summary:
+tags:
+    - Statistics
+    - Software Development
+---
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        padding: 20px;
+    }
+    .controls {
+        margin: 20px 0;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .control-group {
+        display: flex;
+        flex-direction: column;
+    }
+    .preset-buttons {
+        display: flex;
+        gap: 10px;
+    }
+</style>
+
+<h4>Frequentist vs. Bayesian Power Visualization</h4>
+<div id="plot"></div>
+
+<div class="controls">
+    <div class="control-group">
+        <label for="effectSize">Effect Size (Difference between Means)</label>
+        <input type="range" id="effectSize" min="0" max="10" value="2.5" step="0.1" oninput="updatePlot()" />
+        <span id="effectSizeValue">2.5</span>
+    </div>
+
+    <div class="control-group">
+        <label for="stdDev1">Std Dev of Distribution 1</label>
+        <input type="range" id="stdDev1" min="0.5" max="10" value="4.5" step="0.1" oninput="updatePlot()" />
+        <span id="stdDev1Value">4.5</span>
+    </div>
+
+    <div class="control-group">
+        <label for="stdDev2">Std Dev of Distribution 2</label>
+        <input type="range" id="stdDev2" min="0.5" max="10" value="4.5" step="0.1" oninput="updatePlot()" />
+        <span id="stdDev2Value">4.5</span>
+    </div>
+
+    <div class="control-group">
+        <label for="sampleSize">Sample Size</label>
+        <input type="range" id="sampleSize" min="1" max="500" value="30" step="1" oninput="updatePlot()" />
+        <span id="sampleSizeValue">30</span>
+    </div>
+</div>
+
+<div class="preset-buttons">
+    <button onclick="setPreset(0.4, 4.5, 60)">P(Mean1 > Mean2 | Data): 30%</button>
+    <button onclick="setPreset(2.3, 4.5, 60)">p-value == 0.5</button>
+</div>
+
+<script>
+    function normalDistribution(x, mean, stdError) {
+        return (1 / (stdError * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * ((x - mean) / stdError) ** 2);
+    }
+
+    function generateData(mean, stdDev, sampleSize) {
+        const stdError = stdDev / Math.sqrt(sampleSize);
+        const xValues = Array.from({ length: 2000 }, (_, i) => i / 100 - 10); // More points for a smoother curve
+        const yValues = xValues.map((x) => normalDistribution(x, mean, stdError));
+        return { x: xValues, y: yValues, stdError: stdError };
+    }
+
+    function calculateOverlap(data1, data2) {
+        let overlapArea = 0;
+        for (let i = 0; i < data1.x.length; i++) {
+            overlapArea += Math.min(data1.y[i], data2.y[i]) * 0.01; // Smaller step size for finer approximation
+        }
+        return overlapArea;
+    }
+
+    function calculateBayesianProbability(mean1, mean2, stdError1, stdError2) {
+        const diffMean = mean1 - mean2;
+        const combinedStdError = Math.sqrt(stdError1 ** 2 + stdError2 ** 2);
+        const probability = 0.5 * (1 + erf(diffMean / (Math.sqrt(2) * combinedStdError)));
+        return probability;
+    }
+
+    function erf(x) {
+        const sign = x < 0 ? -1 : 1;
+        const a1 = 0.254829592,
+            a2 = -0.284496736,
+            a3 = 1.421413741,
+            a4 = -1.453152027,
+            a5 = 1.061405429;
+        const p = 0.3275911;
+        const absX = Math.abs(x);
+        const t = 1 / (1 + p * absX);
+        const y = 1 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-absX * absX);
+        return sign * y;
+    }
+
+    function setPreset(effectSize, stdDev, sampleSize) {
+        document.getElementById("effectSize").value = effectSize;
+        document.getElementById("stdDev1").value = stdDev;
+        document.getElementById("stdDev2").value = stdDev;
+        document.getElementById("sampleSize").value = sampleSize;
+
+        document.getElementById("effectSizeValue").textContent = effectSize;
+        document.getElementById("stdDev1Value").textContent = stdDev;
+        document.getElementById("stdDev2Value").textContent = stdDev;
+        document.getElementById("sampleSizeValue").textContent = sampleSize;
+
+        updatePlot();
+    }
+
+    function updatePlot() {
+        const effectSize = parseFloat(document.getElementById("effectSize").value);
+        const mean1 = -effectSize / 2;
+        const mean2 = effectSize / 2;
+        const stdDev1 = parseFloat(document.getElementById("stdDev1").value);
+        const stdDev2 = parseFloat(document.getElementById("stdDev2").value);
+        const sampleSize = parseInt(document.getElementById("sampleSize").value);
+
+        document.getElementById("effectSizeValue").textContent = effectSize;
+        document.getElementById("stdDev1Value").textContent = stdDev1;
+        document.getElementById("stdDev2Value").textContent = stdDev2;
+        document.getElementById("sampleSizeValue").textContent = sampleSize;
+
+        const data1 = generateData(mean1, stdDev1, sampleSize);
+        const data2 = generateData(mean2, stdDev2, sampleSize);
+
+        const trace1 = {
+            x: data1.x,
+            y: data1.y,
+            mode: "lines",
+            name: `Distribution 1 (Mean = ${mean1.toFixed(2)})`,
+            line: { dash: "solid", width: 2 },
+        };
+
+        const trace2 = {
+            x: data2.x,
+            y: data2.y,
+            mode: "lines",
+            name: `Distribution 2 (Mean = ${mean2.toFixed(2)})`,
+            line: { dash: "dot", width: 2 },
+        };
+
+        const overlapX = [];
+        const overlapY = [];
+        for (let i = 0; i < data1.x.length; i++) {
+            overlapX.push(data1.x[i]);
+            overlapY.push(Math.min(data1.y[i], data2.y[i]));
+        }
+        const overlapTrace = {
+            x: overlapX,
+            y: overlapY,
+            fill: "tozeroy",
+            mode: "lines",
+            name: "Overlap Area",
+            opacity: 0.3,
+        };
+
+        const overlapArea = calculateOverlap(data1, data2);
+        const bayesianProbability = calculateBayesianProbability(mean1, mean2, data1.stdError, data2.stdError);
+
+        const titleText = `Bayesian: P(Mean1 > Mean2 | Data) ≈ ${bayesianProbability.toFixed(4)}<br>Frequentist: p-value ≈ ${overlapArea.toFixed(4)}`;
+
+        Plotly.newPlot("plot", [trace1, trace2, overlapTrace], {
+            title: { text: titleText, font: { size: 16 } },
+            xaxis: { showticklabels: false }, // Removes the value labels on the x-axis
+            yaxis: { title: "Probability Density" },
+            width: 650,
+            height: 500,
+            legend: {
+                orientation: "h",
+                x: 0.5,
+                xanchor: "center",
+                y: -0.3,
+            },
+        });
+    }
+
+    updatePlot();
+</script>
