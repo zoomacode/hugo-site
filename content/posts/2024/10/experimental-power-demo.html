@@ -67,9 +67,16 @@ tags:
 </div>
 
 <div class="preset-buttons">
-    <button onclick="setPreset(0.4, 4.5, 60)">P(Mean1 > Mean2 | Data): 30%</button>
-    <button onclick="setPreset(2.3, 4.5, 60)">p-value == 0.5</button>
+    <button onclick="setPreset(0.4, 4.5, 60)">P(Mean1 < Mean2 | Data): 66%</button>
+    <button onclick="setPreset(2.3, 4.5, 60)">p-value == 0.05</button>
 </div>
+
+<hr style="width: 100%; margin-top: 20px" />
+<p class="notice">
+    <b>Please note:</b> the p-value represents the probability of rejecting the null hypothesis, while Bayesian probability offers a more intuitive
+    interpretation—the likelihood that one outcome is better than another. In this illustration, you can think of Mean1 as a prior distribution, serving as a
+    baseline or reference for comparison with Mean2.
+</p>
 
 <script>
     function normalDistribution(x, mean, stdError) {
@@ -94,7 +101,7 @@ tags:
     function calculateBayesianProbability(mean1, mean2, stdError1, stdError2) {
         const diffMean = mean1 - mean2;
         const combinedStdError = Math.sqrt(stdError1 ** 2 + stdError2 ** 2);
-        const probability = 0.5 * (1 + erf(diffMean / (Math.sqrt(2) * combinedStdError)));
+        const probability = 1 - 0.5 * (1 + erf(diffMean / (Math.sqrt(2) * combinedStdError)));
         return probability;
     }
 
@@ -176,7 +183,7 @@ tags:
         const overlapArea = calculateOverlap(data1, data2);
         const bayesianProbability = calculateBayesianProbability(mean1, mean2, data1.stdError, data2.stdError);
 
-        const titleText = `Bayesian: P(Mean1 > Mean2 | Data) ≈ ${bayesianProbability.toFixed(4)}<br>Frequentist: p-value ≈ ${overlapArea.toFixed(4)}`;
+        const titleText = `Bayesian: P(Mean1 < Mean2 | Data) ≈ ${bayesianProbability.toFixed(4)}<br>Frequentist: p-value ≈ ${overlapArea.toFixed(4)}`;
 
         Plotly.newPlot("plot", [trace1, trace2, overlapTrace], {
             title: { text: titleText, font: { size: 16 } },
