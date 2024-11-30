@@ -93,4 +93,26 @@ list(range(10)) | F(is_odd) | P(lambda x: x * 2): [2, 6, 10, 14, 18]
 gen_fn() | F(is_odd) | P(lambda x: x * 2): [2, 6, 10, 14, 18]
 ```
 
+Moving from this:
+
+```python
+result = [x * 2 for x in range(10) if is_odd(x)]
+```
+
+to this:
+
+```python
+result = list(range(10)) | F(is_odd) | P(lambda x: x * 2))
+```
+
+This may not be seen as a big deal but if you try to implement something like
+
+```python
+range(10) | F(f1) | P(op1) | P(op2) | P(op3) | F(f2)
+```
+
+and make it work in a lazy evaluation fashion, you will discovered rather quickly that
+it is not that easy at all or intuitive. There are ways like `Queue` but they require
+a lot of boilerplate code.
+
 The complete code can be found here: [`pipe.py`](./pipe.py)
