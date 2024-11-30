@@ -1,7 +1,7 @@
 ---
 title: "Python Pipes"
 date: 2024-11-29T19:38:26-07:00
-draft: true
+draft: false
 author: Anton Golubtsov
 summary:
 tags:
