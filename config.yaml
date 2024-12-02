@@ -15,40 +15,42 @@ taxonomies:
 languages:
   en:
     disabled: false
+    weight: 1
+    languageCode: en
+    languageName: English
   ru:
     disabled: false
+    weight: 2
+    languageCode: ru
+    languageName: Русский
 
 menu:
   main:
     - identifier: about
       name: About
       pre: <i class='fa fa-heart'></i>
-      url: /about/
-      weight: -110
+      pageRef: /about/
+      weight: -100
     - identifier: posts
       name: Posts
       pre: <i class='fa fa-heart'></i>
-      url: /posts/
-      weight: -110
+      pageRef: /posts/
+      weight: -130
     - identifier: book-review
       name: Book reviews
       pre: <i class='fa fa-heart'></i>
-      url: /book-reviews/
-      weight: -110
-    # - identifier: tags
-    #   name: Tags
-    #   pre: <i class='fa fa-heart'></i>
-    #   url: /tags/
-    #   weight: -110
+      pageRef: /book-reviews/
+      weight: -120
     - identifier: Jobs To Be Done 47
       name: JTBD
       pre: <i class='fa fa-heart'></i>
-      url: /jobs-to-be-done-47/
+      pageRef: /jobs-to-be-done-47/
       weight: -110
     - identifier: RSS
       name: RSS
       ref: /feed.xml
-      url: /feed.xml
+      pageRef: /feed.xml
+      weight: -90
       params:
         - format: rss
 
