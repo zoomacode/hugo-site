@@ -16,40 +16,36 @@ languages:
   en:
     disabled: false
     weight: 1
-    languageCode: en
-    languageName: English
+    languageCode: en-us
+    languageName: En
   ru:
     disabled: false
     weight: 2
     languageCode: ru
-    languageName: Русский
+    languageName: Ru
 
 menu:
   main:
     - identifier: about
       name: About
-      pre: <i class='fa fa-heart'></i>
       pageRef: /about/
       weight: -100
     - identifier: posts
       name: Posts
-      pre: <i class='fa fa-heart'></i>
       pageRef: /posts/
       weight: -130
     - identifier: book-review
       name: Book reviews
-      pre: <i class='fa fa-heart'></i>
       pageRef: /book-reviews/
       weight: -120
     - identifier: Jobs To Be Done 47
       name: JTBD
-      pre: <i class='fa fa-heart'></i>
       pageRef: /jobs-to-be-done-47/
       weight: -110
     - identifier: RSS
       name: RSS
-      ref: /feed.xml
-      pageRef: /feed.xml
+      ref: /
+      pageRef: /
       weight: -90
       params:
         - format: rss
