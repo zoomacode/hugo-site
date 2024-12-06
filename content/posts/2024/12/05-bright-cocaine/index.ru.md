@@ -5,7 +5,8 @@ draft: false
 author: Anton Golubtsov
 summary:
 tags:
-    - random thoughts
+    - Thoughts
+    - Random
 ---
 
 ### Введение
