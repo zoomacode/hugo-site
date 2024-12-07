@@ -1,5 +1,5 @@
 ---
-title: "Recommendation System on HNSW and Exponential Moving Averages"
+title: "Рекомендательная система на основе HNSW и экспоненциальных скользящих средних"
 date: 2024-10-11T21:29:10-07:00
 draft: false
 author: Anton Golubtsov
@@ -146,7 +146,7 @@ D, I = get_recommenations(random_bucket_emb, index)
 rec_bucket_noise_msg = print_recommenations("Recommendations (buckets):", embs, I)
 ```
 
-That it pretty much it.
+That it is pretty much it.
 
 #### Areas of improvements
 
