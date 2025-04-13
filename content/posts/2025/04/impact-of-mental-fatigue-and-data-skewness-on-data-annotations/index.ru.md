@@ -1,7 +1,7 @@
 ---
 title: "Влияние умственного утомления, монотонности задач и перекоса данных на эффективность аннотаторов"
 date: 2025-04-11T21:12:19-07:00
-draft: true
+draft: false
 author: Anton Golubtsov
 summary:
 tags:

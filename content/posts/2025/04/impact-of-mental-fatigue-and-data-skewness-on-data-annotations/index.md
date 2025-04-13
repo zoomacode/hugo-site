@@ -1,7 +1,7 @@
 ---
 title: "The Impact of Mental Fatigue, Task Monotony, and Data Skewness on Data Annotator Performance"
 date: 2025-04-11T21:12:19-07:00
-draft: true
+draft: false
 author: Anton Golubtsov
 summary:
 tags:
