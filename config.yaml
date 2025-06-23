@@ -53,6 +53,7 @@ menu:
 params:
   show_reading_time: true
   site_logo: /favicon.png
+  width: 60rem
   mainSections:
     - posts
     - book-reviews
