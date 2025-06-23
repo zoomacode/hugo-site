@@ -65,6 +65,21 @@ params:
   rss: /feed.xml
   utterances:
     repo: zoomacode/hugo-site
+  author:
+    name: Anton Golubtsov
+    email: logrusadm@gmail.com
+    url: https://chaotic.land/
+    socials:
+      - name: twitter
+        url: 'https://twitter.com/zoomacode'
+      - name: github
+        url: 'https://github.com/zoomacode'
+      - name: linkedin
+        url: 'https://www.linkedin.com/in/zoomacode/'
+      - name: keybase
+        url: 'https://keybase.io/zoomacode'
+      - name: mastodon
+        url: 'https://mastodon.social/@zoomacode'
 
   ananke_socials:
     - name: twitter

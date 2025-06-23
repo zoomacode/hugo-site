@@ -1,0 +1,103 @@
+<meta charset="utf-8">
+
+{{ if and .IsHome .Paginator.HasPrev }}
+  <meta name="robots" content="noindex, nofollow, noarchive">
+{{ else if .Params.noindex }}
+  <meta name="robots" content="noindex, noarchive">
+{{ end }}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Author Information -->
+{{ with site.Params.author }}
+<meta name="author" content="{{ .name }}">
+<link rel="author" href="{{ .url }}">
+{{ end }}
+
+<!-- Description -->
+{{ with .Description }}
+  <meta name="description" content="{{ . }}">
+{{ else }}
+  {{ if .IsPage }}
+    <meta name="description" content="{{ .Summary }}">
+  {{ else }}
+    {{ with site.Params.description }}
+      <meta name="description" content="{{ . }}">
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+<meta name="color-scheme" content="light dark">
+
+<!-- Enhanced OpenGraph Tags -->
+{{ if site.Params.opengraph }}
+  {{ template "_internal/opengraph.html" . }}
+  
+  <!-- Additional author and social OpenGraph tags -->
+  {{ with site.Params.author }}
+  <meta property="article:author" content="{{ .name }}">
+  <meta property="og:image:alt" content="Article by {{ .name }}">
+  {{ end }}
+  
+  <!-- Social media profile links -->
+  {{ with site.Params.author.socials }}
+    {{ range . }}
+      {{ if eq .name "twitter" }}
+        <meta name="twitter:creator" content="@{{ replaceRE "^https?://(?:www\\.)?twitter\\.com/" "" .url }}">
+        <meta name="twitter:site" content="@{{ replaceRE "^https?://(?:www\\.)?twitter\\.com/" "" .url }}">
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+<!-- Enhanced Twitter Cards -->
+{{ if site.Params.twittercards }}
+  {{ template "_internal/twitter_cards.html" . }}
+  
+  <!-- Additional Twitter metadata -->
+  {{ with site.Params.author.socials }}
+    {{ range . }}
+      {{ if eq .name "twitter" }}
+        <meta name="twitter:creator" content="@{{ replaceRE "^https?://(?:www\\.)?twitter\\.com/" "" .url }}">
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+<!-- JSON-LD Structured Data for Author and Social Links -->
+{{ if site.Params.schema }}
+  {{ template "_internal/schema.html" . }}
+  
+  <!-- Additional structured data for author -->
+  {{ with site.Params.author }}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "{{ .name }}",
+    "url": "{{ .url }}",
+    "email": "{{ .email }}",
+    "sameAs": [
+      {{ range $index, $social := .socials }}
+        {{ if $index }},{{ end }}
+        "{{ $social.url }}"
+      {{ end }}
+    ]
+  }
+  </script>
+  {{ end }}
+{{ end }}
+
+<!-- Social Media Profile Links for Discovery -->
+{{ with site.Params.author.socials }}
+  {{ range . }}
+    <link rel="me" href="{{ .url }}">
+  {{ end }}
+{{ end }}
+
+<!-- Canonical URL -->
+{{ if .Permalink }}
+<link rel="canonical" href="{{ .Permalink }}">
+{{ end }}
+
+{{ hugo.Generator }}
