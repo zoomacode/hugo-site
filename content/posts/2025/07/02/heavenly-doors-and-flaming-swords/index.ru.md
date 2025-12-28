@@ -18,4 +18,4 @@ tags:
 
 P.S. Кстати, Израиль вольно переводится как «Мы, кто борется с Богом».
 
-[^1]: выжимка на русском - [Мы, борющиеся с Богом: восприятие божественного / Спринт бестселлера We Who Wrestle with God Джордана Питерсона](https://makeright.ru/library/we-who-wrestle-with-god-by-jordan-peterson-sprint/) или полная версия [We Who Wrestle with God: Perceptions of the Divine](https://www.ozon.ru/product/we-who-wrestle-with-god-perceptions-of-the-divine-1786201410/?abt_att=1&origin_referer=www.google.com)
+[^1]: выжимка на русском - [Мы, борющиеся с Богом: восприятие божественного / Спринт бестселлера We Who Wrestle with God Джордана Питерсона](https://makeright.ru/library/we-who-wrestle-with-god-by-jordan-peterson-sprint/) или полная версия на английском [We Who Wrestle with God: Perceptions of the Divine](https://www.ozon.ru/product/we-who-wrestle-with-god-perceptions-of-the-divine-1786201410/?abt_att=1&origin_referer=www.google.com)
