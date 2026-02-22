@@ -1,0 +1,66 @@
+.newsletter-signup {
+  margin: 0 auto 1rem;
+  padding-bottom: 1rem;
+  max-width: 42rem;
+  text-align: left;
+}
+
+.newsletter-signup h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.3rem;
+}
+
+.newsletter-signup p {
+  margin: 0.4rem 0;
+}
+
+.embeddable-buttondown-form {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.embeddable-buttondown-form label {
+  width: 100%;
+  font-weight: 600;
+}
+
+.embeddable-buttondown-form input[type="email"] {
+  flex: 1 1 16rem;
+  min-width: 0;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--theme);
+  color: var(--primary);
+}
+
+.embeddable-buttondown-form input[type="submit"] {
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--entry);
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.embeddable-buttondown-form input[type="submit"]:hover {
+  filter: brightness(0.98);
+}
+
+@media (max-width: 640px) {
+  .embeddable-buttondown-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.home-info {
+  margin: 0 0 var(--gap);
+}
+
+.home-info .entry-content {
+  margin: 0 0 0.6rem;
+}

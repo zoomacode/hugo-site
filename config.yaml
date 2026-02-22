@@ -2,7 +2,7 @@ baseURL: 'https://chaotic.land/'
 languageCode: en-us
 defaultContentLanguage: en
 title: Chaotic Thoughts
-theme: hugo-flex
+theme: PaperMod
 copyright: Anton Golubtsov
 description: A collection of random thoughts on random topics from software engineering to mushrooms
 googleAnalytics: G-96GHV7J9Q8
@@ -44,46 +44,30 @@ menu:
       weight: -110
     - identifier: RSS
       name: RSS
-      ref: /
-      pageRef: /
+      url: /feed.xml
       weight: -90
-      params:
-        - format: rss
+
+    - identifier: newsletter
+      name: Newsletter
+      url: https://buttondown.com/zoomacode
+      weight: -85
 
 params:
-  show_reading_time: true
-  site_logo: /favicon.png
-  width: 60rem
+  defaultTheme: auto
+  ShowReadingTime: true
+  ShowCodeCopyButtons: true
+  ShowPostNavLinks: true
+  ShowShareButtons: true
+  ShowToc: true
+  TocOpen: false
+  disableSpecial1stPost: true
+  homeInfoParams:
+    Content: A collection of random thoughts on random topics from software engineering to mushrooms.
   mainSections:
     - posts
     - book-reviews
-  favicon: true
-  linkicons: false
-  twittercards: true
-  opengraph: true
-  summaries: true
-  schema: true
-  rss: /feed.xml
-  utterances:
-    repo: zoomacode/hugo-site
-  author:
-    name: Anton Golubtsov
-    email: logrusadm@gmail.com
-    url: https://chaotic.land/
-    socials:
-      - name: twitter
-        url: 'https://twitter.com/zoomacode'
-      - name: github
-        url: 'https://github.com/zoomacode'
-      - name: linkedin
-        url: 'https://www.linkedin.com/in/zoomacode/'
-      - name: keybase
-        url: 'https://keybase.io/zoomacode'
-      - name: mastodon
-        url: 'https://mastodon.social/@zoomacode'
-
-  ananke_socials:
-    - name: twitter
+  socialIcons:
+    - name: x
       url: 'https://twitter.com/zoomacode'
     - name: github
       url: 'https://github.com/zoomacode'
@@ -93,6 +77,13 @@ params:
       url: 'https://keybase.io/zoomacode'
     - name: mastodon
       url: 'https://mastodon.social/@zoomacode'
+  newsletter:
+    url: https://buttondown.com/zoomacode
+    form_action: https://buttondown.com/api/emails/embed-subscribe/zoomacode
+  author:
+    name: Anton Golubtsov
+    email: logrusadm@gmail.com
+    url: https://chaotic.land/
 
 outputFormats:
   rss:
