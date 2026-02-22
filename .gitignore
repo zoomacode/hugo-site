@@ -1,5 +1,6 @@
 .hugo_build.lock
 .DS_Store
+.codex/
 
 resources/_gen
 public
