@@ -1,7 +1,8 @@
 ---
 title: "{{ replace .Name "-" " " | title }}"
 date: {{ .Date }}
-draft: true
+publishDate: {{ .Date }}
+draft: false
 author: Anton Golubtsov
 summary:
 tags:
