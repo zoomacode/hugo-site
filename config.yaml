@@ -77,6 +77,10 @@ params:
       url: 'https://keybase.io/zoomacode'
     - name: mastodon
       url: 'https://mastodon.social/@zoomacode'
+    - name: vsco
+      url: 'https://vsco.co/zoomacode'
+    - name: substack
+      url: 'https://antongolubtsov.substack.com/'
   newsletter:
     url: https://buttondown.com/zoomacode
     form_action: https://buttondown.com/api/emails/embed-subscribe/zoomacode

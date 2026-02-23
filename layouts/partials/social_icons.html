@@ -1,0 +1,25 @@
+<div class="social-icons" {{ with .align}}align="{{.}}" {{- end }}>
+    {{- range site.Params.socialIcons }}
+    {{- $iconName := (trim .name " " | lower) }}
+    <a href="{{ trim .url " " | safeURL }}" target="_blank" rel="noopener noreferrer me"
+        title="{{ (.title | default .name) | title }}">
+        {{- if eq $iconName "vsco" }}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.25" />
+            <circle cx="12" cy="12" r="3.1" />
+            <circle cx="12" cy="3.75" r="0.55" fill="currentColor" stroke="none" />
+            <circle cx="17.84" cy="6.16" r="0.55" fill="currentColor" stroke="none" />
+            <circle cx="20.25" cy="12" r="0.55" fill="currentColor" stroke="none" />
+            <circle cx="17.84" cy="17.84" r="0.55" fill="currentColor" stroke="none" />
+            <circle cx="12" cy="20.25" r="0.55" fill="currentColor" stroke="none" />
+            <circle cx="6.16" cy="17.84" r="0.55" fill="currentColor" stroke="none" />
+            <circle cx="3.75" cy="12" r="0.55" fill="currentColor" stroke="none" />
+            <circle cx="6.16" cy="6.16" r="0.55" fill="currentColor" stroke="none" />
+        </svg>
+        {{- else }}
+        {{ partial "svg.html" . }}
+        {{- end }}
+    </a>
+    {{- end }}
+</div>
