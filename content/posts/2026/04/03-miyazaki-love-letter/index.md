@@ -8,6 +8,7 @@ summary:
 tags:
     -
 ---
+
 I was walking my dog when the thought arrived — that Hayao Miyazaki's films are a love letter to ordinary women.
 
 In Nausicaä, we see a little girl who believes in the friendly intent of nature, standing between her people and a seemingly hostile world, establishing peace through sacrificing herself for the things she loves. Similarly, in Spirited Away, Chihiro takes care of her family and her friends, starting as a person who doesn't care much about anything but herself. She is a child, after all — moving from one city to another, new school and so on. Why would you expect any different? But then she grows through hard labor and a bunch of obstacles. She demonstrates care for people you wouldn't expect her to care about — Lin, the girl she met in the bathhouse who became her friend, then even Yubaba's baby, then Haku. They were all a little hostile towards her at first, and still that pulling desire to help, to save the day.
@@ -32,4 +33,4 @@ Not warriors. Craftsmen, fathers. Maintaining the world in a different way.
 
 If you think about it, it's just a story about regular life. About men and women. For a very, very long time — almost our whole existence — we lived that way, where everyone suffered a lot and everyone did their part. Someone stayed home, cooking and keeping things together. Someone went to the field for hard labor, or went hunting and might never come back. Child mortality was brutal. Real stories about regular people. The heroism of persistence. The happiness of supporting each other. That's why they resonate at that deeper level, where the fairy tale at the surface somehow makes you feel part of the story.
 
-Thank you for being alongside me.
+Thank you for being alongside me
