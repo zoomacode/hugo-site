@@ -9,6 +9,22 @@ googleAnalytics: G-96GHV7J9Q8
 favicon: favicon.png
 enableEmoji: true
 
+security:
+  allowContent:
+    # These existing interactive posts are HTML content; keep Org content blocked.
+    - '! ^text/org$'
+
+markup:
+  goldmark:
+    extensions:
+      passthrough:
+        enable: true
+        delimiters:
+          block:
+            - ['\[', '\]']
+          inline:
+            - ['\(', '\)']
+
 taxonomies:
   tag: tags
 
