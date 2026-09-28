@@ -13,29 +13,27 @@ tags:
     - Queueing Theory
 ---
 
-A large part of my career has been spent working with systems that process a lot of user requests. I have seen some of them survive sustained traffic far above their capacity. Others fell apart at a load they should have been able to handle. The difference was rarely explained by the number of pods or the programming language.
+I've spent much of my career working on systems that process large volumes of user requests. I have seen some of them survive sustained traffic far above their capacity. Others fell apart at a load they should have been able to handle. The difference was rarely explained by the number of pods or the programming language.
 
 Let me start with two systems.
 
 ### System A: total collapse
 
-System A was a fairly standard request and response service running in Kubernetes. It received a request, did some work, called other services, and returned the result. Autoscaling added pods when load increased. This had worked well enough through ordinary peaks.
+System A was a fairly standard service running in Kubernetes and handling client requests. It received a request, did some work, called other services, and returned the result. Autoscaling added pods when load increased. This had worked well enough through ordinary peaks.
 
-Then incoming traffic reached roughly five times the service's maximum capacity. Kubernetes scaled the deployment to its configured limit. CPU and memory were full, useful throughput fell close to zero, and new pods began restarting soon after they joined the serving pool. Adding more pods did not immediately help: each new pod was exposed to the same excess traffic before it could contribute much useful work.
+Then incoming traffic reached roughly five times the service's maximum capacity. Kubernetes scaled the deployment to its configured limit. CPU was saturated and memory was exhausted, useful throughput fell close to zero, and new pods began restarting soon after they joined the serving pool. Adding more pods did not immediately help: each new pod was exposed to the same excess traffic before it could contribute much useful work.
 
-The team recovered by stopping traffic, scaling capacity substantially, and then restoring traffic gradually. Once the service could make progress again, the backlog began to drain. Eventually traffic returned to its normal level.
+The team recovered by stopping traffic, scaling capacity substantially, and then restoring traffic gradually. Once the service began completing requests again, the backlog began to drain. Eventually traffic returned to its normal level.
 
 There are details to investigate in any real incident like this. Was the first trigger a traffic spike, a short outage, or a downstream slowdown? Where did the waiting requests accumulate? Which health check caused a restart? But the feedback loop is recognizable: less useful work gets done, more work waits, and the work that waits makes recovery harder.
 
 ### System B: busy, but working
 
-System B was also exposed to traffic above its capacity for hours. I was able to keep its CPU near 99% while maintaining low latency and as much useful throughput as the service could deliver. The high percentiles of latency increased somewhat, but remained within the service objective. Memory stayed bounded, and new pods could join and start serving. Excess requests were rejected quickly. In that system, the response happened to be `429`.[^status]
+System B was also exposed to traffic above its capacity for hours. I was able to keep its CPU near 99% while maintaining low latency and as much useful throughput as the service could deliver. The high percentiles of latency increased somewhat, but remained within the service objective. Memory stayed bounded, and new pods could join and start serving. Excess requests were rejected quickly. That system used `429` for the rejection response.[^status]
 
-From the outside, both systems were very busy. One stopped being useful. The other kept doing about as much useful work as it could.
+Both systems were heavily loaded, but their results were very different. Useful throughput fell close to zero in the first and stayed near capacity in the second.
 
-Why?
-
-My answer is that System B controlled the boundary between *offered work* and *admitted work*. System A allowed too much work to cross that boundary, including work that had little chance of finishing in time. The part I like most is that this is the service's responsibility. I should not need every caller to guess how many requests my service can survive. We need a little queueing theory to see how to make that responsibility real.
+System B limited how much work it accepted, distinguishing between *offered work* and *admitted work*. System A accepted too much, including requests with little chance of finishing in time. What matters to me is that the service owns this limit. I should not need every caller to guess how many requests my service can handle.
 
 If you want a faster route through the article, read [There is always a queue](#there-is-always-a-queue), [A service should remain useful under excess demand](#a-service-should-remain-useful-under-excess-demand), and [Putting everything together](#putting-everything-together), then take the [self-defense checklist](#a-self-defense-checklist) into your next design review. The sections between them show how I arrived at the limits and what can go wrong at each boundary.
 
@@ -81,7 +79,7 @@ For a CPU bound stage, we can begin with CPU time per request, \(S_{cpu}\). If t
 
 Here \(\rho\) is CPU utilization: the fraction of those \(m\) cores' total capacity that the admitted work demands.
 
-How do we get that 20 milliseconds? Over a representative, approximately steady 60-second window, suppose four cores use 120 CPU seconds *attributable to 6,000 successfully completed requests*. Then:
+How do we estimate CPU time per request? Over a representative, approximately steady 60-second window, suppose four cores use 120 CPU seconds *attributable to 6,000 successfully completed requests*. Then:
 
 \[
 S_{cpu} \approx \frac{120\ \text{CPU seconds}}{6{,}000\ \text{useful completions}}
@@ -116,7 +114,7 @@ For a backlog of 1,000 requests, 100 requests per second of capacity, and 90 arr
 
 Waiting can rise much faster than utilization. In the simplest single server model with random arrivals and random service times, average queueing delay is proportional to \(\rho/(1-\rho)\), where \(\rho\) is utilization—the fraction of that server's capacity in use. That factor is 9 at 90% utilization, 19 at 95%, and 99 at 99%. These are properties of that model, not multipliers to paste into a production dashboard.
 
-This is why "keep CPU below 70%" can be sensible for one service and wasteful for another. The target depends on burst size, request cost, the latency objective, and how quickly capacity can be added. It is not a law of nature. In our four-core example, suppose load tests show that the latency objective holds through 85% CPU for this mix of requests. That gives an initial *safe* throughput estimate of \(0.85(4)/0.020=170\) useful requests per second, below the 200/s CPU-only ceiling. We will use that operating point as a starting estimate for waiting and scaling, then test rather than treat it as a guaranteed departure rate.
+This is why "keep CPU below 70%" can be sensible for one service and wasteful for another. The target depends on burst size, request cost, the latency objective, and how quickly capacity can be added. It is not a law of nature. In our four-core example, suppose load tests show that the latency objective holds through 85% CPU for this mix of requests. That gives an initial *safe* throughput estimate of \(0.85(4)/0.020=170\) useful requests per second, below the 200/s CPU-only ceiling. We will use this estimate to size the queue and plan scaling, then test it. It does not yet guarantee that workers can keep taking requests from the queue at that rate.
 
 ### A closer look at variability
 
@@ -191,17 +189,17 @@ next arrival:         I → reject
 
 For the waiting queue, I might start at 16 slots rather than the estimated 17, then measure the latency distribution under bursts. A request close to its deadline may need to be declined even when a slot is free.
 
-A bounded channel is not enough if requests can accumulate while *trying to enter it*. In Tokio, for example, `send(...).await` waits for channel capacity. If I spawn one unrestricted task per arrival, I can still accumulate unbounded waiting tasks outside a channel of size 16. `try_send` fails immediately when the channel is full; awaiting `send` is appropriate only if the producers waiting on it are bounded or backpressure can propagate safely to them.[^tokio] Count every waiting population, not just the one with "queue" in its type name.
+A bounded channel is not enough if requests can accumulate while *trying to enter it*. In Tokio, for example, `send(...).await` waits for channel capacity. If I spawn one unrestricted task per arrival, I can still accumulate unbounded waiting tasks outside a channel of size 16. `try_send` fails immediately when the channel is full; awaiting `send` is appropriate only if the producers waiting on it are bounded or backpressure can propagate safely to them.[^tokio] Count requests at every place they can wait, including those outside an explicit queue.
 
-These limits change the mathematical model, too. A finite internal system can remain bounded when offered arrivals exceed 170/s because it refuses some of them. Little's Law then applies to admitted jobs and their time until exit, counting completions and other exits consistently, not to all offered attempts. The excess work has not vanished: it was rejected, abandoned, or is waiting outside the service.
+These limits change the mathematical model, too. A service with finite capacity can keep its internal workload bounded even when arrivals exceed 170/s, because it rejects some requests. Little's Law then applies to admitted work and the time until it leaves the system. Successful completions and other outcomes must be counted consistently; the calculation cannot use the entire offered arrival rate. The excess work has not vanished: it was rejected, abandoned, or is waiting outside the service.
 
-A 10,000 item queue does not give us more throughput. It gives us permission to be 10,000 items behind. Sometimes that is exactly what we want: batch processing can tolerate a backlog and smooth a burst. Sometimes it converts excess demand into a slow failure that nobody notices until callers have already given up.
+A queue with room for 10,000 items does not increase throughput. It allows a backlog of up to 10,000 unprocessed items. Sometimes that is exactly what we want: batch processing can tolerate a backlog and smooth a burst. Sometimes it converts excess demand into a slow failure that nobody notices until callers have already given up.
 
 > Queues absorb variance. They do not create capacity.
 
 ### A closer look at worker-pool handoffs
 
-Splitting CPU and I/O work into separate pools can make the resource boundary clearer, but it is easy to create a new queue without noticing. Request A leaves a CPU worker to do I/O, and that worker takes request B from the input queue. Suppose the CPU queue has two places, request D arrives while A is waiting, and B is still using CPU when A's I/O completes:
+Separate CPU and I/O pools let us manage the use of those resources independently, but it is easy to create a new queue without noticing. Request A leaves a CPU worker to do I/O, and that worker takes request B from the input queue. Suppose the CPU queue has two places, request D arrives while A is waiting, and B is still using CPU when A's I/O completes:
 
 ```text
                     A on CPU       A on I/O       A needs CPU again
@@ -221,11 +219,11 @@ The simpler option for an asynchronous service is often one CPU pool with nonblo
 
 That last limit can be larger than the number of cores without requiring more CPU threads. If a request uses 10 milliseconds of CPU and waits 100 milliseconds for I/O, roughly 11 requests per core could be in flight in an ideal steady state. This assumes the I/O dependency can sustain the corresponding throughput; if it slows down, more in-flight work just becomes more waiting. I would bound calls to that dependency separately and use a circuit breaker when timeouts show that continuing is likely to waste work. Core count, CPU time, I/O latency, and useful throughput give us a starting point; [adaptive concurrency limiters](https://github.com/Netflix/concurrency-limits) can adjust the bound from observed latency. They still need safe bounds and load tests.
 
-That handoff is one more waiting population to bound, not a reason to abandon the admission boundary. Even after we have bounded every waiting place, we still have to ask whether a request inside it can produce a useful answer. A free slot is worth little if the work we put into it will miss its deadline or fail downstream.
+The handoff creates another place where waiting must be bounded, while the admission limit still applies. Even after we have bounded every waiting place, we still have to ask whether a request inside it can produce a useful answer. A free slot is worth little if the work we put into it will miss its deadline or fail downstream.
 
 ## When work is unlikely to succeed
 
-Consider a client with a 15 second deadline calling a server with a 30 second timeout. If the client gives up at 15 seconds, the server may spend another 15 seconds doing work for somebody who is no longer listening. Under light traffic that is wasteful. Under heavy traffic those 15 seconds can occupy the resource that other requests need to finish.
+Consider a client with a deadline of 15 seconds calling a server with a timeout of 30 seconds. If the client gives up at 15 seconds, the server may spend another 15 seconds doing work for somebody who is no longer listening. Under light traffic that is wasteful. Under heavy traffic those 15 seconds can occupy the resource that other requests need to finish.
 
 The deadline should travel with the request. If the client has 15 seconds, service A may have only 12 seconds left by the time it calls B. By the time B calls C, perhaps seven remain. Each layer should use the *remaining* time, allow a margin for returning a response, and cancel work that no longer has a caller. Propagation needs to reach queued work and expensive downstream calls, not just the HTTP handler.
 
@@ -247,7 +245,7 @@ That is, the probability of finishing before the deadline should meet the chosen
 
 We may implement that with measured quantiles or a calibrated heuristic rather than an explicit distribution. In either case, measure how often admitted requests miss their deadlines and adjust. A request may also expire *while waiting*. The queue needs a way to discard it before it reaches the scarce resource.
 
-FIFO is an easy default, but it can leave a nearly expired request behind a long running job. Earliest deadline first (EDF) may help when deadlines differ. It can also starve work with long deadlines, and it cannot rescue a request whose remaining time is already too short. Scheduling and admission solve different parts of the problem.
+FIFO is an easy default, but it can leave a request close to its deadline behind a long-running job. Earliest deadline first (EDF) may help when deadlines differ. It can also starve work with long deadlines, and it cannot rescue a request whose remaining time is already too short. Scheduling and admission solve different parts of the problem.
 
 ### A circuit breaker should defend the caller's own resources
 
@@ -255,13 +253,13 @@ Circuit breakers are usually introduced as a way to stop hammering a failing dow
 
 Suppose a request needs ten seconds of CPU preparation before calling that dependency. If the breaker was already open but we check it only at the call site, we spend those ten seconds on a request that cannot finish. Failing then may cause the caller to retry and repeat the CPU work. Waiting for the dependency or retrying inside the service keeps an active slot occupied while the queue grows and the deadline shrinks.
 
-At the entrance to that request path, the admission check should consult the same breaker or overload signal. New requests can then be refused before the CPU step, or sent down a cheaper degraded path if the contract permits. Keep the call-site check too: the dependency can fail after admission, and running requests still need deadlines and cancellation. The breaker also needs a small number of probes to detect recovery; a permanently open breaker is another failure mode.[^breaker]
+Before processing begins, the admission check should consult the same breaker or overload signal. New requests can then be refused before the CPU step, or processed at lower cost with a reduced result if the contract permits. Keep the call-site check too: the dependency can fail after admission, and running requests still need deadlines and cancellation. The breaker also needs a small number of probes to detect recovery; a breaker that never checks for recovery can itself prevent the service from recovering.[^breaker]
 
 A deadline and a breaker offer different evidence at the same admission boundary. The first asks whether enough time remains; the second uses recent outcomes to judge whether a required operation is likely to succeed. Neither is a promise, but together they help reserve scarce capacity for work with a plausible path to a useful result.
 
 ## A service should remain useful under excess demand
 
-The service property I want is simple to state:
+This is what I want from a service:
 
 > A component should remain stable when callers offer more work than it can process.
 
@@ -279,9 +277,9 @@ The service still needs limits on active work and waiting, with admission decisi
 
 The distinction should reach the API. `429 Too Many Requests` describes a client exceeding a rate limit; `503 Service Unavailable` can describe temporary capacity exhaustion and can include `Retry-After`.[^status] System B used `429` for fast overload rejection. Whatever the status code, the response and dashboards should make the reason clear so a client knows whether to back off, retry elsewhere, or stop.
 
-A service-owned admission boundary and clear responses change the caller's job. Without them, each caller may end up carrying a guessed semaphore, a hand-tuned sleep, or a special case for how many requests the dependency can survive. Those guesses become stale whenever the service or workload changes.
+When a service controls admission and explains its rejections clearly, callers have less work to do. Otherwise, each caller may need a semaphore with an estimated limit, manually chosen delays, or special rules based on the assumed capacity of the dependency. Those guesses become stale whenever the service or workload changes.
 
-If the dependency protects itself and responds clearly, I can remove much of that babysitting. The caller still owns its own deadline, retry budget, idempotency, and decision about whether the work is worth doing. It no longer has to be the dependency's overload controller. That is a real simplification in a system with many callers.
+If the dependency protects itself and responds clearly, many of those caller-side limits are no longer needed. The caller still owns its own deadline, retry budget, idempotency, and decision about whether the work is worth doing. It no longer has to be the dependency's overload controller. That is a real simplification in a system with many callers.
 
 At increasing offered load I would like to see this shape:
 
@@ -297,15 +295,15 @@ Contrast that with System A, where useful throughput *fell* while resource consu
 
 I would plot unique requests offered per second, admissions, useful completions before the deadline, and quick rejections on the same timeline. Count each logical request once rather than inflating demand with retry attempts. If useful throughput rises and then holds steady as offered load grows, while successful latency and in-flight work stay bounded, the service is defending its capacity. If it rejects half the demand, users still have a capacity problem, even though the service itself has not collapsed. The two facts should be visible together.
 
-Instead of saying **"It can handle about X QPS before it falls over"**, I would say **"For this workload mix, one unit can complete about X useful requests per second within the latency objective; excess load is rejected rather than allowed to degrade that throughput."** A bounded queue may absorb a short burst before rejection begins. The response should also tell callers whether a retry is appropriate; if it is, the API needs a safe retry story.
+Instead of saying **"It can handle about X QPS before it falls over"**, I would say **"For this workload mix, one unit can complete about X useful requests per second within the latency objective; excess load is rejected rather than allowed to degrade that throughput."** A bounded queue may absorb a short burst before rejection begins. The response should also tell callers whether a retry is appropriate; if it is, the API needs a safe retry policy.
 
 The workload mix belongs in that sentence. Otherwise an increase in expensive requests can appear to be a mysterious loss of capacity even when the server is doing exactly the amount of work it could always do.
 
-That contract has consequences beyond the service itself. Rejected work may return as a retry, wait in a broker, or linger while an autoscaler brings new pods online. Those are different places for the same excess demand to live, so I want to follow the work across those boundaries next.
+Quick rejection protects the service, but excess demand may remain. Work can return as a retry, wait in a broker, or wait for an autoscaler to bring new pods online. If the work still needs to be done, it is waiting somewhere else. Next, I want to look at what happens in each of those places.
 
 ## Cost of retries
 
-"Retries cause retry storms" is a misleading shortcut. A retry is another attempt at the same logical request; what matters is its cost and whether the work still has a chance to succeed. The caller and the receiving service pay different costs.
+“Retries cause retry storms” is too simple an explanation. A retry is another attempt at the same logical request; what matters is its cost and whether the work still has a chance to succeed. The caller and the receiving service pay different costs.
 
 For the caller, the failed attempt's latency and any backoff before trying again both eat into the deadline. Another attempt adds traffic and may repeat an operation whose previous outcome is unknown. A timeout does not prove the first attempt failed, which is why the operation's idempotency contract matters.[^retries]
 
@@ -313,7 +311,7 @@ That caller may itself be a service with another caller waiting on it. Imagine 1
 
 A retry from B to C may be cheap for C to reject, but B's backoff keeps the upstream contexts alive longer. If C's completion rate also falls, a growing backlog adds to the problem. The cost of a retry is not only what the receiver does for that attempt.
 
-Giving up can cost more than one well-placed retry. Suppose B looks healthy when A starts, but the call to B fails after A has spent ten seconds of CPU preparing input. If A retries B while its own caller still wants the answer, it may reuse that preparation. If A fails and its caller retries the whole operation, the ten seconds may be paid again, reducing useful throughput. That argues for a local retry only while the deadline leaves room and B has a plausible chance of recovering. If B is overloaded, repeated calls may just occupy A's slot and deepen congestion; the ten seconds already spent are not a reason to keep trying indefinitely.
+Giving up can cost more than one well-placed retry. Suppose B looks healthy when A starts, but the call to B fails after A has spent ten seconds of CPU preparing input. If A retries B while its own caller still wants the answer, it may reuse that preparation. If A fails and its caller retries the whole operation, those ten seconds of CPU work may have to be repeated, reducing useful throughput. That argues for a local retry only while the deadline leaves room and B has a plausible chance of recovering. If B is overloaded, repeated calls may just occupy A's slot and deepen congestion; the ten seconds already spent are not a reason to keep trying indefinitely.
 
 We can also make that preparation reusable. A bounded cache keyed by the logical request can keep the prepared input for a later attempt. A shared cache such as Redis makes it available across pods; a local cache with sticky routing avoids the remote lookup, but a reroute or pod restart may force recomputation.
 
@@ -334,7 +332,7 @@ The choice is really about where the next attempt starts, and which work it must
  reuse prep        redo prep      retry B later
 ```
 
-Preserving work does not mean every layer should retry. If A retries B and B retries C, one user action can multiply into many calls to C. Choose retry ownership with both attempt amplification and the cost of giving up in mind. If a service knows another attempt will not help, it should say so rather than invite more work.
+Preserving work does not mean every layer should retry. If A retries B and B retries C, one user action can multiply into many calls to C. When choosing which component handles retries, consider both the multiplication of attempts and the cost of giving up. If a service knows another attempt will not help, it should say so rather than invite more work.
 
 For the receiving service, the question is how much scarce capacity a failed attempt consumes. We can approximate its cost as:
 
@@ -347,7 +345,7 @@ C_{\text{attempt}} &= C_{\text{receive}} + C_{\text{parse}} \\
 
 Each \(C\) is a cost measured in the same scarce resource for the named step. In particular, \(C_{\text{partial work}}\) is the work an unsuccessful attempt performs after admission.
 
-If the first three steps are cheap and partial work is nearly zero, the receiver can reject promptly when admission has no room. The caller can back off and try again within its deadline; a different pod may have room, or capacity may arrive shortly. Google describes a version of this behavior in its discussion of [handling overload](https://sre.google/sre-book/handling-overload/): quick rejection can help retries find an available backend.
+If the first three steps are cheap and partial work is nearly zero, the receiver can reject promptly when the limit on admitted work has been reached. The caller can back off and try again within its deadline; a different pod may have room, or capacity may arrive shortly. Google describes a version of this behavior in its discussion of [handling overload](https://sre.google/sre-book/handling-overload/): quick rejection can help retries find an available backend.
 
 There is a useful distinction between **"I have no room for this request"** and **"my dependency has no useful capacity right now."** The first is a local decision by one receiver; the second is an inference a caller can make from repeated outcomes. One refusal does not prove that every pod is full, so a caller with time and a retry budget may find room elsewhere. If refusals become common across pods, repeatedly searching for a free one spends ingress capacity across the whole dependency without making much progress. The caller should back off or stop and let its own caller know. The dependency need not be literally down; it may be doing all the useful work it can.
 
@@ -360,9 +358,9 @@ Prompt: attempt --> reject --> backoff 200 ms --> retry
 Late:   attempt --> wait 900 ms --> reject --> backoff 200 ms --> retry
 ```
 
-This is how I think of retries under a finite admission boundary: the unresolved logical requests form a waiting population *outside* the service. Each new attempt asks whether a slot is available yet. That population can be invisible to a server-side queue metric, but it is still waiting work. Keep separate counts for logical requests, retry attempts, and the resource cost of those attempts. Moving waiting outside the server is useful only if the new waiting loop is controlled.
+I think of work returning through retries as a queue *outside* the service: the logical requests are still unresolved and waiting for admission. Each new attempt asks whether a slot is available yet. Those requests can be invisible to a server-side queue metric, but it is still waiting work. Keep separate counts for logical requests, retry attempts, and the resource cost of those attempts. Moving waiting outside the server is useful only if waiting and retries in the new location are also bounded.
 
-If each failed attempt already used half a GPU inference, held a database lock, or called three dependencies, the same retry behavior can consume the capacity needed for recovery. A useful operational metric is:
+If each failed attempt already performed half the computation for a GPU inference, held a database lock, or called three dependencies, the same retry behavior can consume the capacity needed for recovery. A useful operational metric is:
 
 \[
 \text{retry waste ratio} =
@@ -372,7 +370,7 @@ If each failed attempt already used half a GPU inference, held a database lock, 
 
 The waste ratio tells us whether retries are burning the resource we are trying to protect, but cheap rejections can still add up. Every rejected attempt has to reach the service and pass through admission. If many callers retry together, those attempts can crowd out useful work even though each one is cheap.
 
-After a rejection, the caller should honor `Retry-After` if supplied and spread its attempts out with jitter. The retry loop also needs to stop when its deadline or attempt budget runs out. Those limits let quick rejection move waiting to callers without turning that waiting population into an unbounded stream of new attempts.
+After a rejection, the caller should honor `Retry-After` if supplied and spread its attempts out with jitter. The retry loop also needs to stop when its deadline or attempt budget runs out. Those limits let quick rejection move waiting to callers without creating an unbounded stream of new attempts.
 
 ## A message broker does not make the capacity deficit disappear
 
@@ -386,11 +384,11 @@ For records waiting to be processed, ignoring duplication and redelivery, the qu
 
 Here \(Q\) is the number of pending records, \(\lambda\) is the rate at which new records arrive, \(\mu\) is the rate workers start processing them, and \(\delta\) is the rate records are discarded before processing. A logical job can expire without reducing \(Q\): its record leaves this queue only when we start or discard it. This is not the total number of records retained in a Kafka log.
 
-At 1,000 messages per second arriving, 800 started by workers, and none discarded, the backlog grows by 200 each second. An hour of that leaves roughly 720,000 additional messages. This queue depth is an accumulated capacity deficit. It is not a property of Kafka that more partitions or longer retention will erase on its own.
+At 1,000 messages per second arriving, 800 started by workers, and none discarded, the backlog grows by 200 each second. An hour of that leaves roughly 720,000 additional messages. This queue depth is an accumulated capacity deficit. More Kafka partitions or longer retention will not eliminate that deficit on their own.
 
-Broker records and user demand are not quite the same population. Retrying one unresolved job creates another attempt, not another logical job. If the retry publishes a new message, though, it *does* create another physical record. A dashboard can show growing "demand" when some of that growth is repeated attempts at work we already knew about.
+The number of broker records does not necessarily match the number of user jobs. Retrying one unresolved job creates another attempt, not another logical job. If the retry publishes a new message, though, it *does* create another physical record. A dashboard can show growing "demand" when some of that growth is repeated attempts at work we already knew about.
 
-An idempotency key becomes more useful when we check it *before* repeating expensive work. If the job already finished, a worker can acknowledge and discard the duplicate record, or reuse a stored result if downstream still needs it. That cheap path lets workers actively drain a backlog of duplicates instead of sending each one through the full computation again. The completion record must survive retries. For copies arriving together, an ordinary cache lookup is not enough: workers need an atomic claim to avoid duplicate computation, and external side effects still need idempotent or transactional handling.
+An idempotency key becomes more useful when we check it *before* repeating expensive work. If the job already finished, a worker can acknowledge and discard the duplicate record, or reuse a stored result if downstream still needs it. That cheap path lets workers actively drain a backlog of duplicates instead of sending each one through the full computation again. The completion record must be retained long enough to recognize retries. For copies arriving together, an ordinary cache lookup is not enough: workers need an atomic claim to avoid duplicate computation, and external side effects still need idempotent or transactional handling.
 
 ### A closer look at logical-job accounting
 
@@ -401,23 +399,23 @@ The pending-record equation tells us how many messages wait in the broker, not h
 = \lambda_{\text{new}}(t)-x_{\text{successful}}(t)-x_{\text{expired}}(t)-x_{\text{abandoned}}(t)
 \]
 
-Here \(N_{\text{live}}\) counts unresolved logical jobs, \(\lambda_{\text{new}}\) counts newly created jobs per second, and each \(x\) is a rate of jobs leaving through the named outcome. These exit categories must be disjoint; abandonment includes a terminal failure if we choose that definition. This is an accounting identity, not a claim that expiration is independent of earlier arrivals. If every job expires \(D\) seconds after arrival, the jobs expiring at time \(t\) came from the arrivals at \(t-D\), and only those not completed or abandoned in the meantime can expire. If all of that cohort is still unresolved, \(x_{\text{expired}}(t)=\lambda_{\text{new}}(t-D)\); otherwise the expiration rate is smaller.
+Here \(N_{\text{live}}\) counts unresolved logical jobs, \(\lambda_{\text{new}}\) counts newly created jobs per second, and each \(x\) is a rate of jobs leaving through the named outcome. These exit categories must be disjoint; abandonment includes a terminal failure if we choose that definition. This is an accounting identity, not a claim that expiration is independent of earlier arrivals. If every job expires \(D\) seconds after arrival, the jobs expiring at time \(t\) came from the arrivals at \(t-D\), and only those not completed or abandoned in the meantime can expire. If every job from that group is still awaiting a result, \(x_{\text{expired}}(t)=\lambda_{\text{new}}(t-D)\); otherwise the expiration rate is smaller.
 
 Retries of the same job change the number of attempts or records, not \(N_{\text{live}}\). This is why I would graph those counts separately.
 
 ### Decide whether the backlog is still useful
 
-For the pending queue, if the deficit persists for \(T\) seconds, a rough estimate before discards is \(Q_0+(\lambda-\mu)T\), where \(Q_0\) is the starting backlog and \(\lambda-\mu\) is its growth rate. A job's deadline determines when it stops being *useful*; a broker TTL may remove its record, but broker retention alone may leave old messages available long after they stopped mattering. Workers still need to check the deadline and discard expired work before expensive processing. If workers can start and finish records at a rate \(\mu\) above the arrival rate \(\lambda\), with no further discards and steady rates, the recovery estimate is again \(Q/(\mu-\lambda)\).
+For the pending queue, if the deficit persists for \(T\) seconds, a rough estimate before discards is \(Q_0+(\lambda-\mu)T\), where \(Q_0\) is the starting backlog and \(\lambda-\mu\) is its growth rate. A job's deadline determines when it stops being *useful*; a broker TTL may remove its record, but broker retention alone may leave old messages available long after they stopped mattering. Workers still need to check the deadline and discard expired work before expensive processing. If workers can start and finish processing records at a rate \(\mu\) above the arrival rate \(\lambda\), with no further discards and steady rates, the recovery estimate is again \(Q/(\mu-\lambda)\).
 
-The number you should care about often is not queue depth by itself but the **age of the oldest useful item**. Ten thousand messages could represent ten seconds of work or an entire day. The deadline of the work determines whether either is acceptable.
+The **age of the oldest useful item** often matters more than queue depth alone. Ten thousand messages could represent ten seconds of work or an entire day. The deadline of the work determines whether either is acceptable.
 
-This is where queue configuration becomes a business decision. An intrusion alert may be extremely valuable for the next few seconds and nearly worthless tomorrow. An ordinary notification may tolerate a few minutes. History enrichment may wait for hours. We should decide which work expires, which work can be delayed, and which work should be dropped rather than endlessly redriven. Only then should we choose worker counts, retention, and retry policy.
+This is where queue configuration becomes a business decision. An intrusion alert may be extremely valuable for the next few seconds and nearly worthless tomorrow. An ordinary notification may tolerate a few minutes. History enrichment may wait for hours. We should decide which work expires, which work can be delayed, and which work should be dropped rather than repeatedly delivered without an end. Only then should we choose worker counts, retention, and retry policy.
 
 ### Who gets the next slot?
 
 First consider jobs of one kind. FIFO takes the oldest job first. Suppose each job is useful for 30 seconds, but the one at the front has already waited 40. We should discard it before processing. If overload continues, taking the newest available job first (LIFO) can let some jobs finish while they are still useful.
 
-That choice sacrifices older work. LIFO does not create capacity, and old jobs can wait indefinitely unless we proactively remove them when they expire. It is unsuitable when jobs must be processed in order or when every accepted job must eventually finish.
+Older jobs wait longer as a result. LIFO does not create capacity, and old jobs can wait indefinitely unless we proactively remove them when they expire. It is unsuitable when jobs must be processed in order or when every accepted job must eventually finish.
 
 With different kinds of work, FIFO can also leave an urgent alert behind a batch of low-value jobs. Strict priority protects the alert but can starve everything else. We have to decide whether the next slot should favor a deadline, *value per unit of scarce work*, or a guaranteed share for each class. Those goals can conflict.
 
@@ -431,7 +429,7 @@ Instead, we can reject each enrichment job with a probability that rises as offe
 
 A real-time service can make that choice at its entrance and reject cheaply. A pipeline can refuse lower-value work before publishing it, or discard it before an expensive consumer stage, *if the contract allows that work to be lost*. If every job must eventually run, leaving it in the broker is deferral, not shedding; the capacity deficit remains.
 
-The probability is a preference, not the safety boundary. Random variation and sudden jumps in offered load can still admit too much in a short interval, so the hard limits on active work and local waiting remain necessary. If alerts need a guaranteed share, we must reserve or fairly schedule capacity as well. I would judge the policy by useful completions and deadline misses for each class during a burst, not by the percentage rejected alone.
+The probability expresses a preference; it does not provide a hard safety limit. Random variation and sudden jumps in offered load can still admit too much in a short interval, so the hard limits on active work and local waiting remain necessary. If alerts need a guaranteed share of capacity, we must reserve it or enforce that share through scheduling. I would judge the policy by useful completions and deadline misses for each class during a burst, not by the percentage rejected alone.
 
 ## When autoscaling fails
 
@@ -447,9 +445,9 @@ pod stops making progress
 
 That is why a busy pod should still be able to answer a cheap health check. If it is finishing admitted work but cannot accept more, restarting it only removes useful capacity. Kubernetes cautions that badly designed liveness probes can cause cascading failures.[^kubernetes]
 
-Scaling up can help only after new pods start, become ready, and begin doing useful work. If each new pod accepts requests without bounding its own waiting or checking whether they can still finish, adding replicas may create more places for work to pile up without adding many useful completions. The autoscaler is a control loop with a delay, not an instantaneous reserve of healthy capacity.[^kubernetes]
+Scaling up can help only after new pods start, become ready, and begin doing useful work. If each new pod accepts requests without bounding its own waiting or checking whether they can still finish, adding replicas may create more places for work to pile up without adding many useful completions. The autoscaler is a control loop with a delay, so we cannot count on additional capacity appearing immediately.[^kubernetes]
 
-In a service that controls admission, losing a pod looks different. Total successes may fall until replacement capacity arrives. Rejections rise. Surviving pods continue to finish admitted work, so the deployment retains a stable base from which to recover. This is the distinction I meant earlier: **overloaded and unhealthy are not synonyms**. A service can be unable to accept another request while still being healthy enough to serve the work it has already accepted.
+In a service that controls admission, losing a pod looks different. Total successes may fall until replacement capacity arrives. Rejections rise. Surviving pods continue to finish admitted work, so the deployment retains a stable base from which to recover. **Overload alone does not mean a service is unhealthy**. A service can be unable to accept another request while still being healthy enough to serve the work it has already accepted.
 
 ### Derive the scaling target
 
@@ -479,9 +477,9 @@ I would start with three questions before choosing a mechanism:
 
 A CPU graph or a count of broker records does not answer those questions on its own.
 
-At each scarce stage, admission control decides whether work starts, waits within a bound, or is refused or deferred. Quotas, often enforced by rate limiters, allocate shares, not capacity. Probabilistic shedding can refuse a growing fraction of lower-value work as congestion rises, preserving slack for important work. Neither removes the need for hard limits on started work and local waiting. Deadlines and circuit breakers help us avoid work unlikely to finish; a breaker should turn away requests before we spend heavily on a required dependency that is already failing. Scheduling chooses which waiting job gets the next slot.
+At each scarce stage, admission control decides whether work starts, waits within a bound, or is refused or deferred. Quotas, often enforced by rate limiters, allocate shares, not capacity. Probabilistic shedding can refuse a growing fraction of lower-value work as congestion rises, preserving slack for important work. Neither removes the need for hard limits on started work and local waiting. Deadlines and circuit breakers help us avoid work unlikely to finish; a breaker should turn away requests before we spend heavily on preparation for a required downstream call that is already likely to fail. Scheduling chooses which waiting job gets the next slot.
 
-One pod refusing work is defending itself; it is not declaring the entire dependency down. A caller may try another pod while it has a deadline and retry budget. Repeated refusals across pods suggest that the dependency as a whole has no room, so more attempts are unlikely to help. Each component can make that judgment from its own limits and recent outcomes, but the retry bounds keep those local decisions from becoming a fleet-wide retry storm.
+One pod refusing work is defending itself; it is not declaring the entire dependency down. A caller may try another pod while it has time left before its deadline and a remaining retry budget. Repeated refusals across pods suggest that the dependency as a whole has no room, so more attempts are unlikely to help. Each component can make that judgment from its own limits and recent outcomes, but the retry bounds keep those local decisions from becoming a fleet-wide retry storm.
 
 If a request is rejected, a client may retry it; if a consumer pauses, the broker retains it. Neither makes the excess disappear. Even an autoscaler adds capacity only after a delay, and only if the resource that limits throughput actually grows.
 
@@ -489,9 +487,9 @@ If a request is rejected, a client may retry it; if a consumer pauses, the broke
 
 Suppose a four-core service spends 20 milliseconds of CPU per request, and load testing shows that it completes about 170 useful requests/s within the latency objective for its usual workload mix. It normally receives 130/s, but traffic rises to 200/s for ten seconds. For this sizing example, we also assume workers keep taking about 170 requests/s from the waiting queue during the burst. Accepting the whole spike would then leave roughly 300 requests waiting: 30 excess arrivals/s for ten seconds.
 
-Now compare that backlog with the latency budget. A 100-millisecond queue-wait budget suggests only about 17 waiting places (`170/s × 0.1s`); we might start with 16 and test. That queue can absorb a brief variation, not all 300 requests. We also need a separate, load-tested limit on started requests, including those waiting on I/O.
+Now compare that backlog with the latency budget. A 100-millisecond queue-wait budget suggests only about 17 waiting places (`170/s × 0.1s`); we might start with 16 and test. That queue can smooth a short burst, but it cannot hold all 300 requests. We also need a separate, load-tested limit on started requests, including those waiting on I/O.
 
-At the HTTP entrance, make the cheap decisions first. A tenant may be out of quota even when the pod has room. A required dependency's breaker may be open even when the tenant has quota. A deadline may already have expired. Lower-value work may be probabilistically shed as congestion grows, preserving slack for more important traffic. If the request still has a useful path, try an active slot or a place in the bounded queue. If neither is available, refuse it promptly. Keep the reasons distinct—quota, no viable path, deadline, or capacity—so the caller knows whether another attempt might help.
+At the HTTP entrance, make the cheap decisions first. A tenant may be out of quota even when the pod has room. A required dependency's breaker may be open even when the tenant has quota. A deadline may already have expired. Lower-value work may be probabilistically shed as congestion grows, preserving slack for more important traffic. If the request can still produce a useful result, try an active slot or a place in the bounded queue. If neither is available, refuse it promptly. Keep the reasons distinct—quota, no viable path, deadline, or capacity—so the caller knows whether another attempt might help.
 
 The queue also needs a rule for who starts next. FIFO may be enough for one class of requests; different deadlines or tenant guarantees may call for another scheduling policy. Discard a request that expires while waiting, and recheck its deadline and required dependency before it starts. A free slot is not a reason to begin work that can no longer produce a useful reply.
 
@@ -508,7 +506,7 @@ slot or short wait ---------> reject: full / too late
 CPU -> limited dependency -> reply -> release slot
 ```
 
-The active slot stays held through CPU work and I/O, and is released when the work it counts actually stops. If the last dependency slows, upstream services may also retain request contexts in memory while they wait for it. If CPU and I/O use separate worker pools, their handoff queues and returning continuations need bounds too. Calls to a scarce dependency need their own limit and a breaker check at the call site, since its state may change after admission. Cancellation should reach queued and active work, but a timed-out request is not proof that its computation has stopped; releasing its permit early could put new work beside the old work and exceed the limit.[^cancellation] An unbounded number of coroutines waiting to enter the queue would defeat the boundary we just built.
+The active slot stays held through CPU work and I/O, and is released when the work it counts actually stops. If the last dependency slows, upstream services may also retain request contexts in memory while they wait for it. If CPU and I/O use separate worker pools, we also need limits on their handoff queues and on requests returning from I/O to resume processing. Calls to a scarce dependency need their own limit and a breaker check at the call site, since its state may change after admission. Cancellation should reach queued and active work, but a timed-out request is not proof that its computation has stopped; releasing its permit early could put new work beside the old work and exceed the limit.[^cancellation] An unbounded number of coroutines waiting to enter the queue would defeat the boundary we just built.
 
 If the caller retries a quick refusal, the waiting moves there. It may still hold the original request in memory throughout backoff, so a cheap rejection for this pod is not necessarily cheap for the whole path. Keep that retry loop within a deadline and attempt budget, jitter its waits, and honor `Retry-After` when supplied. If a later failure can make the caller repeat expensive preparation, consider caching that result or retrying only the failed step; an unknown outcome also needs an idempotency rule.
 
@@ -516,7 +514,7 @@ Meanwhile, the pod keeps the same admission limits as replicas arrive or disappe
 
 ### A broker-fed data pipeline
 
-Publishing to Kafka or SQS is not admission to a worker's scarce stage. At the producer, decide whether the job has a deadline, may be discarded, or must eventually run. Give it a logical id so retries can be distinguished from new demand. Quotas can allocate producer shares; lower-value work can be shed before publishing only if its contract permits loss. If every job must run, the producer needs backpressure or a backlog recovery target with enough capacity to meet it.
+Publishing to Kafka or SQS does not mean a job has been admitted to the processing stage whose resources are limited. At the producer, decide whether the job has a deadline, may be discarded, or must eventually run. Give it a logical id so retries can be distinguished from new demand. Quotas can allocate producer shares; lower-value work can be shed before publishing only if its contract permits loss. If every job must run, the producer needs backpressure or a backlog recovery target with enough capacity to meet it.
 
 The consumer limits how many records it fetches and how many jobs it starts. Before expensive processing, discard expired jobs and already-completed duplicates. Scheduling then matters: FIFO may be required for ordered work, while independent expiring jobs may benefit from deadline or value-based ordering. LIFO can save some fresh jobs only when reordering is allowed and old jobs are actively discarded. An open breaker or a full CPU, database, or GPU stage is a reason to defer or discard work according to its contract, not to build another unlimited queue inside the consumer.
 
@@ -541,17 +539,17 @@ work --> durable output --> mark input done
 
 If no permit is available, leave work in the broker or in a small bounded fetched set. When a costly stage succeeds, make its output durable before marking the input done, with idempotency to handle a crash between those steps. A later stage can then retry without repeating all the preparation; a cache, saved intermediate result, or checkpoint may serve the same purpose. The exact acknowledgement or offset rules depend on the broker and any ordering guarantee.[^broker-admission]
 
-This protects workers, not the age of the backlog by itself. Watch new logical jobs, retry records, the age of the oldest *useful* job, wasted scarce work, and on-time completions separately. If the expected wait exceeds a job's useful lifetime, the producer side needs backpressure or shedding where the contract permits. Adding consumers will not help if the limiting CPU, database, or GPU capacity has not grown.
+This protects workers but does not by itself control how old the backlog becomes. Watch new logical jobs, retry records, the age of the oldest *useful* job, wasted scarce work, and on-time completions separately. If the expected wait exceeds a job's useful lifetime, the producer side needs backpressure or shedding where the contract permits. Adding consumers will not help if the limiting CPU, database, or GPU capacity has not grown.
 
-In both designs, every offered request or job needs an explicit fate: run now, wait under a size or age objective, return to its owner under a controlled retry policy, or be discarded when its value is gone. Under excess load, useful completions should hold near tested capacity, while successful latency and local resource use stay bounded. The excess should appear as quick rejections or backlog with a known age, not as a collapse in useful throughput. If we cannot explain where the work goes, we have probably hidden another queue rather than controlled overload.
+In both designs, we should be able to account for every request or job: it runs now, waits in a queue with a size or age limit, returns to its caller for bounded retries, or is discarded when it is no longer useful. Under excess load, useful completions should hold near tested capacity, while successful latency and local resource use stay bounded. The excess should appear as quick rejections or backlog with a known age, not as a collapse in useful throughput. If we cannot explain where the work goes, we have probably hidden another queue rather than controlled overload.
 
 ## Revisit the two systems
 
-With those boundaries in mind, return to the two systems from the beginning. The contrast was not between a busy service and an idle one: both were offered more work than they could finish. I would put offered requests, attempts, admissions, useful completions, and waiting work on the same timeline for each.
+Returning to the two systems from the beginning, both were offered more work than they could finish. I would put offered requests, attempts, admissions, useful completions, and waiting work on the same timeline for each.
 
 For System A, we know throughput collapsed as pods restarted under the peak. If admissions or hidden waiting continued to grow while useful completions fell, that would explain why adding pods alone did not restore progress. I would check whether retries multiplied attempts, whether expired work still consumed resources, and whether liveness or readiness failures removed capacity before claiming any one cause. Stopping traffic and bringing it back gradually was consistent with getting admitted work back below the rate the service could finish, so the backlog finally had room to drain.
 
-System B had a different shape: admitted work and waiting stayed bounded while quick rejections took the excess. Successful latency remained within the objective and new pods could join without losing the old ones. CPU near 99% was not the measure of success by itself; useful completions, bounded state, and the fraction of unique offered work finished on time tell us much more.
+System B had a different shape: admitted work and waiting stayed bounded while quick rejections took the excess. Successful latency remained within the objective and new pods could join without disrupting the existing ones. CPU near 99% was not the measure of success by itself; useful completions, a bounded internal workload, and the fraction of unique offered work finished on time tell us much more.
 
 ## A self-defense checklist
 
@@ -562,7 +560,7 @@ Before the next peak, I would want short answers to four questions:
 - Can we refuse work that is over quota, too late, or unlikely to succeed *before* it consumes that resource? If work is cancelled, when is the resource actually free?
 - Under excess traffic or a slow dependency, do useful completions hold up, local waiting and memory remain bounded, and eligible rejections remain visible?
 
-During an incident, I would compare unique offered work, retry attempts, admissions, useful on-time completions, and the age of the oldest useful backlog. Then I would change the boundary that is failing and watch for evidence that the change helped:
+During an incident, I would compare unique offered work, retry attempts, admissions, useful on-time completions, and the age of the oldest useful backlog. Then I would adjust the limit that is failing and watch for evidence that the change helped:
 
 - If admitted and in-flight work grow while useful completions fall, limit new starts at the scarce stage. Check whether useful throughput recovers as waiting and memory stabilize.
 - If expired work or costly retries occupy that stage, discard stale work or refuse doomed attempts earlier. Wasted resource time should fall, not just the attempt count.
@@ -570,7 +568,7 @@ During an incident, I would compare unique offered work, retry attempts, admissi
 
 Queues, retries, circuit breakers, and autoscalers are not answers by themselves. They move waiting, stop attempts, or add capacity after a delay. I want to trace a request through the whole path and account for each step: CPU, memory, active slots, connections, downstream work, and the cost of giving up. When the last dependency slows, which upstream requests stay in memory? If we retry, which work repeats and what remains allocated during backoff? Only then can we decide which boundary to add and where.
 
-The question I would take to a design review is: **if callers send ten times your capacity tomorrow—or a required dependency slows tenfold—what will keep completing on time, and where will the rest of the work go?** I do not want every caller to know how to keep my service alive. I want the service to own its capacity boundary and tell callers clearly when it cannot take more, leaving them to decide whether another attempt is worth its cost.
+The question I would take to a design review is: **if callers send ten times as many requests as the service can handle tomorrow, or a required dependency slows tenfold, what will keep completing on time, and where will the rest of the work go?** I do not want every caller to know how to keep my service alive. I want the service to limit its load according to its capacity and tell callers clearly when it cannot take more, leaving them to decide whether another attempt is worth its cost.
 
 [^status]: The service in the opening incident used `429` for overload. [RFC 6585](https://www.rfc-editor.org/rfc/rfc6585.html) defines `429` for a client that has sent too many requests in a given time. [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html) defines `503` for temporary server overload or maintenance and permits `Retry-After`. The choice affects client behavior and monitoring, so it should be explicit in the API contract.
 [^breaker]: The standard [circuit breaker pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker) uses recent failures to skip operations likely to fail, then probes for recovery. The same early decision can protect the calling component's own threads, connections, memory, and CPU time.

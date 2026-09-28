@@ -8,12 +8,14 @@ tags:
     - Random Thoughts
 ---
 
-There are people who feel like a flaming sword — the kind Peterson writes about in "We Who Wrestle with God," burning away everything unworthy just by standing near them. We avert our eyes, or we try to dim their light.
+Some people remind me of the flaming sword Peterson writes about in *We Who Wrestle with God*. Being around them makes my own shortcomings hard to ignore. Their presence can be inspiring, but sometimes I want to look away or find something wrong with them so I can feel better.
 
-Analyzing my own reactions to such people I found envy, a reminder of failures, or weaknesses or a sense of a vast gap in the strength of the spirit. All of this is accompanied by a feeling of internal constriction and resentment, although it could be associated with the aspiration to achieve more and become better. This however requires accepting one's own imperfections, which is valuable in itself, but also makes being near the ideal less scorching. Perhaps if you have never felt this way, you are already pure enough inside.
+I've noticed that reaction in myself. Behind the irritation, I often find envy: someone reminds me of what I haven't done, where I gave up, or where I fell short of the person I wanted to be. That's uncomfortable to admit. It's easier to resent the person who makes me feel inadequate.
 
-By default, people pull others to their level. A drug addict offers you the first taste. An expert shares what they know. A good friend brings warmth. Some close the gap so they don't look worse by comparison. Others pull you toward the light.
+If I take the time to understand that resentment, I have a chance to learn something. I have to accept my own imperfections and acknowledge that someone else may be better at something. Then the difference between us starts to feel less like a personal insult.
 
-I hope I am the second kind. Not a dead hand grabbing at your ankle, pulling you down into the swamp.
+I think we often draw others toward the way we live. Some people encourage others to share their habits so they won't be alone in them. Others share what they know, offer support, and help people attempt things they couldn't manage before. Sometimes we want to bring someone down so we don't have to change; sometimes we manage to help them grow.
 
-**P.S.**: By the way, Israel can be freely translated as "We Who Wrestle with God."
+I hope I do more of the latter. I'd like being around me to make it easier for people to become better versions of themselves.
+
+**P.S.** The name Israel can be loosely translated as “one who wrestles with God.”

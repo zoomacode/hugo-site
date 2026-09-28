@@ -8,126 +8,114 @@ tags:
     -
 ---
 
-Examples of applying the POSIWID lens.
-
 ## Introduction
 
-In management cybernetics, there is a well-known formulation: “the purpose of a system is what it does” (POSIWID). It is commonly used as a practical way to analyze complex systems—organizations, institutions, social practices, and recurring patterns of behavior.
+In cybernetics, there is a saying: “the purpose of a system is what it does” (POSIWID). I use it when I want to understand an organization, an institution, or a pattern in how people behave.
 
-The idea is to set aside declared goals, missions, and explanations, and instead observe the actions and effects a system reliably produces over time. Not isolated decisions or stated intentions, but stable patterns—especially those that become visible under stress, growth, or conflicting incentives.
+I set aside the stated goals for a while and look at what actually happens. Which decisions keep being made? What results do they produce? A system is especially revealing when pressure grows or its participants' interests conflict: it becomes easier to see what it protects and what it is willing to give up.
 
-With sustained observation, these patterns tend to reveal a system’s actual direction more clearly than its language does.
+One bad outcome doesn't tell us much. But if it keeps happening for years, it's worth asking what in the system sustains it. That doesn't necessarily mean deception or a hidden plan. Familiar incentives and constraints can be stronger than stated intentions.
 
-Some of the examples below may feel uncomfortable or overly familiar. This is not accidental.
-
-POSIWID tends to become most visible in systems where expectations are high, language is carefully managed, and outcomes matter personally to many people. The purpose of these examples is not provocation, but clarity: they make the underlying mechanics easier to see.
-
-In practice, this often means looking at systems we would prefer to trust at face value.
+Below are some examples of how I use this approach. Several involve systems I would like to trust, which can make the gap between promises and results particularly uncomfortable.
 
 ## Organizational Systems
 
 ### Example 1: User-centered design
 
-An organization declares that user well-being is its primary principle. In theory, internal processes—from product design to performance evaluation—are aligned around this goal.
+A company says it puts users first. We might expect that commitment to shape both its product and the way it rewards employees.
 
-When examining recurring actions, a different pattern may emerge: mechanisms that encourage impulsive decisions, friction in reversing commitments, frequent prompts optimized for engagement, and interface changes that increase usage without proportional increases in user benefit. These mechanisms persist over time and are actively refined.
+In practice, it may push impulsive purchases, make subscriptions difficult to cancel, and send ever more notifications. Interface changes increase time spent in the app without necessarily making it more useful. If the company keeps refining these choices and extending them across the product, they begin to look like an established way of working.
 
-Through the POSIWID lens, the system appears oriented toward optimizing measurable business outcomes. The language of user focus remains present and highly visible, but it functions as accompanying justification rather than as a controlling constraint.
-
-This gap is often most noticeable to users precisely because they are repeatedly addressed in the language of care, trust, and alignment.
+From a POSIWID perspective, the company is primarily improving measurable business results. Care for the user remains part of its advertising, but does little to constrain its decisions. The more often the company talks about trust, the more noticeable the gap becomes.
 
 ### Example 2: Equal opportunity policies
 
-An organization formally commits to equal opportunity across demographic and cultural dimensions. Policies are documented, compliance is tracked, and official communication remains neutral.
+An organization commits to equal opportunity regardless of background or cultural differences. The rules are written down, and compliance is monitored.
 
-Over time, however, team composition may converge toward greater similarity. Informal networks form, and hiring and promotion decisions increasingly rely on trust, familiarity, and perceived reliability, while formal criteria remain unchanged.
+Yet teams may become increasingly homogeneous, while hiring and promotion depend more heavily on personal connections and trust. The formal criteria stay the same, but people already in the right circles gain an advantage.
 
-At the system level, this produces a redistribution of influence toward those who are already embedded. At the level of individual decision-makers, the logic is pragmatic: reduced uncertainty, lower coordination cost, and improved predictability. The stated principle remains intact, while operational decisions follow a different optimization path.
+For an individual manager, choosing someone familiar may seem practical: coordination is easier, and they know what to expect. Across the organization, however, these choices strengthen the position of people already established there. The stated policy may remain in place for years.
 
 ### Example 3: Employee feedback loops
 
-An organization regularly conducts employee surveys. High workload and poor work–life balance appear as recurring themes. These issues are acknowledged, discussed, and accompanied by commitments to improvement.
+A company regularly asks employees how they feel about their work. Overload and too little time for life outside work come up repeatedly. Management acknowledges the problems and promises improvements.
 
-At the same time, core structures—staffing models, incentive systems, delivery timelines—remain unchanged.
+But deadlines, the distribution of work, and incentives remain unchanged. Surveys give people a chance to speak and reduce tension for a while, then the cycle repeats.
 
-Taken together, surveys and discussions form a stabilizing cycle. They allow tension to be expressed and redistributed without altering the underlying configuration. Through POSIWID, this suggests that workload reduction is not a primary objective. Maintaining performance under sustained pressure functions as a means toward higher-level goals such as growth or output stability.
+I would ask what the process accomplishes in practice. Perhaps it helps the company keep operating under heavy workloads, while the conditions needed to reduce them never materialize. Collecting feedback does not by itself mean that feedback influences decisions.
 
 ## Political and Institutional Systems
 
-The following examples are not presented to rank systems morally, but to illustrate how the same analytical lens applies across very different domains. The goal here is not judgment, but consistency of observation.
+This approach becomes more contentious in politics because it touches values people identify with. I use it to ask the same question: what consequences does the system repeatedly produce, regardless of how it describes itself?
 
 ### Example 1: Historical authoritarian regimes
 
-Some authoritarian regimes have declared goals related to social welfare or national renewal. When observing repeated actions, however, patterns such as militarization, concentration of power, suppression of dissent, and systematic violence become dominant—even when these actions undermine stated objectives.
+An authoritarian regime may promise social justice or national renewal. If its recurring actions are militarization, concentration of power, suppression of dissent, and violence, those actions tell us a great deal about how it works. That is especially revealing when it sacrifices its stated goals to pursue them.
 
-Through POSIWID, ideology appears less as a goal and more as a legitimizing language accompanying a system oriented toward control and domination. For participants, this produces stable effects: redistribution of responsibility, a sense of participation in a larger mission, and personal significance derived from alignment with power.
+In this reading, ideology helps justify and sustain control. It can also let participants feel part of a larger mission, share responsibility with others, and derive a sense of importance from their proximity to power.
 
-At a structural level, this dynamic resembles individual forms of coercion, where denying another’s agency becomes a source of perceived control.
+I see a similarity here with coercion in personal relationships: subordinating someone else can itself provide a sense of control.
 
 ### Example 2: Progressive governance environments
 
-Some regions, particularly large urban and economically dynamic ones, explicitly describe themselves through the language of equality, care, and social justice. These values are consistently present in public communication and policy framing.
+Some large, economically developed regions emphasize their commitment to equality and social justice. Those values appear in public speeches and official documents.
 
-At the same time, long-term outcomes may include rising costs of living, limited housing accessibility, and regulatory structures that disproportionately benefit those already established within the system.
+At the same time, living costs may rise, housing may become less accessible, and existing rules may increasingly benefit people who already own property or have influence.
 
-Through the POSIWID lens, this does not necessarily indicate hypocrisy. Rather, it suggests that the system is optimized to preserve stability, limit disruption, and protect existing allocations of resources. The value language helps maintain legitimacy and reduce social tension, while underlying processes continue to follow their own constraints.
+I don't think that gap alone proves hypocrisy. But it gives us a reason to examine whether the system primarily protects the existing arrangement. Talk of equality may ease discontent while decisions about housing and resources continue to favor established owners.
 
 ### Example 3: Symbolic continuity and power concentration
 
-Political actors often appeal to foundational narratives or historical continuity while introducing structural changes that alter the distribution of power. Symbols, rituals, and language remain familiar, while decision-making authority becomes increasingly centralized.
+Politicians may repeatedly invoke founders, traditions, and loyalty to established principles while concentrating decision-making in their own hands. The symbols remain familiar as the distribution of power changes.
 
-From a POSIWID perspective, symbolic continuity functions to stabilize legitimacy, while repeated actions reveal a shift in the system’s operative purpose—from stewardship to consolidation.
+From a POSIWID perspective, those changes are what I want to follow. Familiar words can help people accept what is happening, but cannot by themselves preserve the system's previous structure.
 
 ## Social and Behavioral Systems
 
-The following examples move away from institutions and toward direct human interaction. Here, the same lens applies, but the mechanisms become visible in a more immediate form.
+We can look at everyday relationships in a similar way. Here, it is especially important to distinguish observable consequences from guesses about other people's motives.
 
 ### Religious practices
 
-In some religious contexts, punitive practices are justified through moral or doctrinal explanations. When focusing on form and effect, these practices often involve public, demonstrative control over bodies and behavior.
+In some religious communities, punishments are explained through faith or morality. If they are public and routinely used to control behavior, that outcome deserves attention too.
 
-At the system level, such practices function to constrain autonomy and enforce conformity. At a deeper level, they generate stable experiences of hierarchy and moral superiority. These effects persist independently of the specific justifications offered.
+Such practices can enforce obedience, strengthen hierarchies, and give those administering punishment a sense of moral superiority. These consequences matter regardless of how participants explain the punishment.
 
 ### Sexual violence
 
-Contemporary research indicates that sexual violence is weakly associated with sexual desire and strongly associated with the pursuit of control. Repetition, denial of consent, and asymmetry of power are its consistent features.
+In sexual violence, I pay attention to coercion, the absence of consent, and the use of power over another person. POSIWID offers a way to examine how violence establishes or maintains that control.
 
-Viewed through POSIWID, sexual violence can be understood as an attempt to assert causality and agency by overriding another person’s autonomy.
+This reading helps identify consequences for the relationship between people, but does not by itself explain every motive for violence.
 
 ### School bullying
 
-Bullying rarely consists of isolated incidents. It is typically public, repetitive, and structured around persistent power imbalances. Over time, violence functions less as an end and more as a means.
+Bullying involves repeated attacks and a persistent imbalance of power. When it happens in front of others, the violence may also reinforce the aggressor's position in the group.
 
-At a surface level, it reinforces status. At a deeper level, it restores a sense of visibility and significance through eliciting reaction. The response of the target confirms the interaction’s social reality.
+It then matters how everyone else responds: whose approval the aggressor gains, who stays out of it, and what allows the bullying to continue. That helps reveal what sustains it beyond the explanations participants give.
 
 ### Self-isolation and avoidance
 
-Some forms of self-isolation appear as protection or moral stance. In stable form, they may serve a different function: avoidance of vulnerability and responsibility, preservation of control through non-participation.
+Someone may explain withdrawal from others as self-care or a matter of principle. Sometimes it also helps them avoid vulnerability, conflict, or responsibility.
 
-In this configuration, moral reasoning becomes a mechanism for maintaining predictability while minimizing exposure to relational risk.
+I would look at what happens over time. Does the distance help them recover and return to life, or does it keep narrowing what they are willing to take part in? The same explanation can accompany very different outcomes.
 
 ## On Basic Needs and Narratives
 
-When explanations are set aside, many stable system behaviors reduce to basic human needs: safety, predictability, access to resources, status, risk management, and a sense of significance.
+Behind repeated decisions, I often find familiar needs: safety, predictability, access to resources, status, and a sense of importance.
 
-Decisions are typically made at this level—quickly and contextually. Narratives emerge afterward, integrating those decisions into a coherent worldview and reducing internal tension.
+I suspect we often make a decision first and find a convincing explanation afterward. That explanation helps reconcile the choice with our view of ourselves and makes the contradiction easier to live with.
 
-From this perspective, explanations are secondary. They do not guide action; they accompany it. Observing which needs are reliably satisfied—and for whom—often provides a clearer understanding of a system than its stated intentions.
+So when I look at a system, I ask which needs it regularly meets, and for whom. The answer can be more useful than the official explanation. But I shouldn't assume in advance that every explanation is an after-the-fact justification. Its relationship to action also needs to be examined.
 
 ## Practical Implications
 
-Recognizing a system’s actual operating goals does not necessarily imply opposition. More often, it removes misplaced expectations and enables more precise interaction.
+Understanding how a system works rarely means, for me, that I need to fight it. More often, it helps me let go of misplaced expectations and decide where to put my effort.
 
-It also makes it harder to mistake alignment of language for alignment of incentives.
+Shared language doesn't guarantee shared interests. If an organization talks about initiative but primarily rewards predictability and low risk, appealing to its values may not be enough to win support for a new idea.
 
-When declared values diverge from observed outcomes, influence through rhetoric is limited. Actions that align with the system’s real optimization targets are more likely to be noticed and supported.
-
-The same applies within organizations. If advancement depends on reliability and risk reduction rather than formal principles, efforts aligned with those dynamics will be more effective.
+The same applies to promotion. If managers reward reliability and reduced risk in practice, that is useful to know when choosing work and discussing its results. Then I can decide whether that way of working suits me.
 
 ## Conclusion
 
-Viewed through the POSIWID lens, words do not determine direction. They matter only when they align with sustained action and downstream consequences. Otherwise, they coexist with processes without shaping them.
+POSIWID helps me compare promises with what happens repeatedly. I find it especially useful where familiar language makes me inclined to trust a system and overlook uncomfortable results.
 
-Underlying these processes are basic human needs. They require no justification and no evaluation. They simply find forms in which they can be repeatedly satisfied.
-
-A system does what it is actually built to do. Understanding this makes it possible to see its movement clearly—and to choose how to engage with it.
+I don't need to know every participant's intentions to see whom the system supports, what it rewards, and which problems it preserves. That is often enough to understand my options better and choose how to engage with it.
