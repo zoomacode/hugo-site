@@ -9,28 +9,22 @@ tags:
     -
 ---
 
-I was walking my dog when the thought arrived — that Hayao Miyazaki's films are a love letter to ordinary women.
+I was walking my dog when it occurred to me that Hayao Miyazaki's films feel like a love letter to ordinary women. They pay close attention to the work of caring for others and how easily we take that care for granted.
 
-In Nausicaä, we see a little girl who believes in the friendly intent of nature, standing between her people and a seemingly hostile world, establishing peace through sacrificing herself for the things she loves. Similarly, in Spirited Away, Chihiro takes care of her family and her friends, starting as a person who doesn't care much about anything but herself. She is a child, after all — moving from one city to another, new school and so on. Why would you expect any different? But then she grows through hard labor and a bunch of obstacles. She demonstrates care for people you wouldn't expect her to care about — Lin, the girl she met in the bathhouse who became her friend, then even Yubaba's baby, then Haku. They were all a little hostile towards her at first, and still that pulling desire to help, to save the day.
+In *Nausicaä*, the heroine tries to understand a natural world that others see as hostile, risking her life to protect those she loves. In *Spirited Away*, Chihiro gradually learns to care for the people around her. At first, she's upset about moving and caught up in her own worries, which seems fair enough for a child facing a new school and an unfamiliar life. Then she has to work, overcome her fear, and help people she barely knows. I like how those attachments develop, even when the first encounters aren't especially welcoming.
 
-In Howl's Moving Castle, Sophie takes care of Howl, who at first seems like a child in a grown man's body — vain, dramatic, falling apart over a grey hair. But Sophie just tends to things. The house. The people in it. Small acts, one after another. And somehow, without any announcement, that changes everything.
+In *Howl's Moving Castle*, Sophie finds herself living with someone who, for all his abilities, often behaves like a spoiled child. She settles into the castle, cleans up, and looks after its inhabitants. Gradually, they grow close to one another. In *My Neighbor Totoro*, Satsuki also takes on a lot of everyday responsibility. Her mother is in the hospital, the family has just moved, and her younger sister needs looking after. Satsuki gets scared too, though, and needs someone to look after her.
 
-In Totoro, we have a similar picture where a little girl holds the household together in a family pulled apart — her mother is sick, they've moved to a different place, finding new friends and so on.
+For a long time, these films mostly made me feel grateful to the women who do this kind of work every day. Cooking, caring for children, helping someone through an illness: all of it takes time and effort. It's easy to get used to having it done, especially when someone else takes on most of it. Miyazaki gives this part of life enough attention for me to notice how much goes into it.
 
-For a long time those movies were a way for me to express gratitude for how much regular women hold the world together behind the curtain, staying in the shadows. It's usually not an epic story you would hear as a legend — not Iliad and Odyssey sort of stuff. You don't hear much about that routine, everyday, work-your-way kind of action.
+Then I started to think the idea went further. In stories about warriors, a sacrifice gives us a clear moment to remember: someone faces danger and chooses to put themselves at risk for others. Everyday care is harder to tell a story about. It repeats, rarely has a definite ending, and usually needs doing again tomorrow.
 
-Then I started wondering. Most popular stories — Bushido, samurai, the warrior mythology — are built around ultimate self-sacrifice, annihilation, a supernova explosion, or the endurance of a melting shield under the dragon's flames. The story that ends in ashes or glory and gets remembered in monuments.
+Even a familiar story about slaying a dragon depends on other people's work. Someone fed the hero, tended their wounds when they returned, and worried while they were away. If they didn't return, someone had to live with that loss. I find myself wondering about those people, even when the story gives them only a few lines.
 
-And Miyazaki keeps asking: what about everything else? Those dragon slayers still need to eat, right? Someone cooked that meal. Someone tended the wound when they came back, or carried the grief when they didn't. Someone kept the children alive through the winter. None of that makes the legend.
+That may be why I enjoy the scenes in Miyazaki's films where people cook, clean, or spend time together. I recognize so much of everyday life in them. Even when things are going reasonably well, it takes effort to keep a home, work, and pay attention to the people you love. And you want to enjoy that life together, too: share a good meal, laugh, find something to be happy about.
 
-Life is different though. It keeps the chaos of the night behind the closed door, night after night. It brings food to the table day after day. It sings and dances in joy from small things. The dragons are real, but they are rare. The closed door, the meal, the song — that is every day.
+His male characters are part of this as well. Kamaji's work in the boiler room keeps the bathhouse running in *Spirited Away*. The girls' father in *Totoro* cares for his daughters while their mother is in the hospital. Thinking about them reminds me how much it matters to have someone you can depend on.
 
-That is what Miyazaki keeps returning to.
+So what began as a thought about a love letter to women became a broader feeling of gratitude for the people we share our lives with. In a family, each person takes on some of the work, and it isn't always obvious how much it costs them. I think part of what moves me about Miyazaki's films is that they help me notice. I watch a fairy tale and find myself thinking about the people who have cared for me, with a better sense of what I have to thank them for.
 
-His male characters work the same way. Kamaji in Spirited Away never leaves his furnace — six arms keeping the bathhouse running, invisible to everyone above him. Tatsuo in Totoro holds his daughters with quiet steadiness while their mother is in the hospital. Not performing strength, just present.
-
-Not warriors. Craftsmen, fathers. Maintaining the world in a different way.
-
-If you think about it, it's just a story about regular life. About men and women. For a very, very long time — almost our whole existence — we lived that way, where everyone suffered a lot and everyone did their part. Someone stayed home, cooking and keeping things together. Someone went to the field for hard labor, or went hunting and might never come back. Child mortality was brutal. Real stories about regular people. The heroism of persistence. The happiness of supporting each other. That's why they resonate at that deeper level, where the fairy tale at the surface somehow makes you feel part of the story.
-
-Thank you for being alongside me
+Thank you for being by my side.
