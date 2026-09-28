@@ -1,7 +1,8 @@
 ---
 title: "Intro to Overload Control for Software Engineers"
-date: 2026-08-16T00:00:00-07:00
-draft: true
+date: 2026-09-27T21:48:07-07:00
+publishDate: 2026-09-27T21:48:07-07:00
+draft: false
 author: Anton Golubtsov
 summary: "Why one busy service collapses while another keeps working, and how to build the second kind."
 toc: true
@@ -36,7 +37,7 @@ Why?
 
 My answer is that System B controlled the boundary between *offered work* and *admitted work*. System A allowed too much work to cross that boundary, including work that had little chance of finishing in time. The part I like most is that this is the service's responsibility. I should not need every caller to guess how many requests my service can survive. We need a little queueing theory to see how to make that responsibility real.
 
-If you want a faster route through the article, read [There is always a queue](#there-is-always-a-queue), [A service should remain useful under excess demand](#a-service-should-remain-useful-under-excess-demand), and [Putting everything together](#putting-everything-together). Those sections give you the main argument and two concrete designs. The sections between them show how I arrived at the limits and what can go wrong at each boundary.
+If you want a faster route through the article, read [There is always a queue](#there-is-always-a-queue), [A service should remain useful under excess demand](#a-service-should-remain-useful-under-excess-demand), and [Putting everything together](#putting-everything-together), then take the [self-defense checklist](#a-self-defense-checklist) into your next design review. The sections between them show how I arrived at the limits and what can go wrong at each boundary.
 
 ## There is always a queue
 
@@ -56,7 +57,7 @@ Here \(L\) is the average number of requests in the system, \(\lambda\) is the r
 
 Suppose a stable service completes 100 requests per second and each request spends an average of 200 milliseconds in the service. On average, 20 requests are present. They are not necessarily all running on CPU. Some may be waiting on an API, a lock, or a connection. Little's Law describes the long run average for a stable flow; it does not say that the service can accept any arrival rate or that all 20 requests are executing in parallel.
 
-The same relationship turns up in a network. At 100 MB/s and a 20-millisecond round trip time, about 2 MB must be in flight to fill the path. Send a 10 MB burst into that bottleneck and the extra bytes have to wait somewhere; 8 MB at 100 MB/s is roughly 80 milliseconds of additional serialization time. The exact delay depends on the network, but the question is the same as for our service: where is the work waiting?
+The same relationship turns up in a network. At 100 MB/s and a 20-millisecond round trip time, about 2 MB must be *in flight* to fill the path. That is data in transit, not a buffer allowance for a future burst. Separately, if 8 MB is already queued ahead of a packet at a 100 MB/s FIFO bottleneck, that packet waits roughly 80 milliseconds before transmission. In-flight data and queued data are different populations, just as requests in progress and requests waiting to start are.
 
 > Making a queue invisible does not make it disappear.
 
@@ -115,7 +116,7 @@ For a backlog of 1,000 requests, 100 requests per second of capacity, and 90 arr
 
 Waiting can rise much faster than utilization. In the simplest single server model with random arrivals and random service times, average queueing delay is proportional to \(\rho/(1-\rho)\), where \(\rho\) is utilization—the fraction of that server's capacity in use. That factor is 9 at 90% utilization, 19 at 95%, and 99 at 99%. These are properties of that model, not multipliers to paste into a production dashboard.
 
-This is why "keep CPU below 70%" can be sensible for one service and wasteful for another. The target depends on burst size, request cost, the latency objective, and how quickly capacity can be added. It is not a law of nature. In our four-core example, suppose load tests show that the latency objective holds through 85% CPU for this mix of requests. That gives an initial *safe* throughput estimate of \(0.85(4)/0.020=170\) useful requests per second, below the 200/s CPU-only ceiling. We will use 170/s to size waiting and scaling, then test rather than treat it as a guaranteed rate.
+This is why "keep CPU below 70%" can be sensible for one service and wasteful for another. The target depends on burst size, request cost, the latency objective, and how quickly capacity can be added. It is not a law of nature. In our four-core example, suppose load tests show that the latency objective holds through 85% CPU for this mix of requests. That gives an initial *safe* throughput estimate of \(0.85(4)/0.020=170\) useful requests per second, below the 200/s CPU-only ceiling. We will use that operating point as a starting estimate for waiting and scaling, then test rather than treat it as a guaranteed departure rate.
 
 ### A closer look at variability
 
@@ -134,15 +135,17 @@ To see what that variability costs, consider a *separate, single-server example*
 
 ### Turn a spike into a requirement
 
-An average arrival rate hides the shape of a spike. Our four-core service can safely finish about 170 requests/s and normally receives 130. Suppose arrivals climb to 200 requests/s for ten seconds. If the request mix stays the same and the queue starts empty, accepting 30 more requests each second than we can finish leaves us with 300 waiting when the burst ends. The peak rate alone does not tell us that; its duration matters too. In general, with peak arrival rate \(\lambda_{\text{peak}}\), safe completion rate \(\mu\), and spike duration \(T_{\text{spike}}\):
+An average arrival rate hides the shape of a spike. Our four-core service met its latency objective at 170 requests/s and normally receives 130. To estimate a waiting queue, I need one more assumption: in this simplified example, workers continue taking about 170 requests/s from that queue during the burst. The load test alone does not prove that departure rate under overload. The service might start more work that finishes too late, or contention might make it start less.
+
+Now suppose arrivals climb to 200 requests/s for ten seconds. If the request mix stays the same and the queue starts empty, accepting 30 more requests each second than workers take leaves us with 300 waiting when the burst ends. The peak rate alone does not tell us that; its duration matters too. In general, with peak arrival rate \(\lambda_{\text{peak}}\), modeled queue departure rate \(\mu\), and spike duration \(T_{\text{spike}}\):
 
 \[
 Q_{\text{spike}}\approx\max(0,\lambda_{\text{peak}}-\mu)T_{\text{spike}}
 \]
 
-Here \(Q_{\text{spike}}\) is the backlog we would create by accepting the whole burst. Once traffic settles back to its normal rate of \(\lambda_0=130\) requests/s, we have \(H=\mu-\lambda_0=40\) requests/s of spare capacity to work it off. Draining those 300 requests therefore takes roughly \(Q_{\text{spike}}/H=7.5\) seconds. A request joining the back of the queue just as the burst ends could wait about \(300/170=1.8\) seconds before it starts—far from a 100-millisecond queue-wait budget.
+Here \(Q_{\text{spike}}\) is the backlog we would create by accepting the whole burst under that departure-rate assumption. Once traffic settles back to its normal rate of \(\lambda_0=130\) requests/s, we have \(H=\mu-\lambda_0=40\) requests/s of spare capacity to work it off. Draining those 300 requests therefore takes roughly \(Q_{\text{spike}}/H=7.5\) seconds. A request joining the back of the queue just as the burst ends could wait about \(300/170=1.8\) seconds before it starts—far from a 100-millisecond queue-wait budget.
 
-Now we can ask how much of the spike we can afford to hold. At 170 completions/s, a 100-millisecond queue-wait budget suggests room for about 17 waiting requests. A one-second recovery deadline would allow a backlog of 40, because the service has 40 completions/s of spare capacity after the burst. Latency is the tighter constraint. If \(Q_{\text{buffer}}\) is the physical queue size, \(W_{q,\text{budget}}\) is the wait budget, and \(T_{\text{recover}}\) is the recovery deadline, we can use the following starting bound:
+Now we can ask how much of the spike we can afford to hold. If workers take about 170 requests/s from the queue, a 100-millisecond queue-wait budget suggests room for about 17 waiting requests. A one-second recovery deadline would allow a backlog of 40, because workers take 40 more requests/s than normally arrive. Latency is the tighter constraint. If \(Q_{\text{buffer}}\) is the physical queue size, \(W_{q,\text{budget}}\) is the wait budget, and \(T_{\text{recover}}\) is the recovery deadline, we can use the following starting bound:
 
 \[
 Q_{\text{allowed}}\lesssim
@@ -152,7 +155,7 @@ H T_{\text{recover}}\right)
 
 That is the sort of requirement I would write down: with 130 requests/s of normal traffic, handle a ten-second burst at 200/s while keeping admitted-request p99 latency within its objective and returning the queue to normal within one second. The arithmetic shows why we cannot accept every request under that contract. We need to add capacity, defer work elsewhere, or decline excess requests quickly.
 
-The backlog estimate does not prove the p99 promise. If \(D_{\text{SLA}}\) is the end-to-end latency target, we still need:
+The backlog estimate does not prove the p99 promise. A queue can drain as workers start requests even if those requests later finish after their deadlines. If \(D_{\text{SLA}}\) is the end-to-end latency target, we still need:
 
 \[
 P(W_q+S+\epsilon\le D_{\text{SLA}})\ge0.99
@@ -198,7 +201,17 @@ A 10,000 item queue does not give us more throughput. It gives us permission to 
 
 ### A closer look at worker-pool handoffs
 
-Splitting CPU and I/O work into separate pools can make the resource boundary clearer, but it is easy to create a new queue without noticing. Request A leaves a CPU worker to do I/O, and that worker takes request B from the input queue. When A's I/O completes, A still needs CPU time to process the result. If its continuation joins the back of the same queue as new requests, later arrivals may already be ahead of it. The first queue may be bounded while completed I/O waits somewhere else.
+Splitting CPU and I/O work into separate pools can make the resource boundary clearer, but it is easy to create a new queue without noticing. Request A leaves a CPU worker to do I/O, and that worker takes request B from the input queue. Suppose the CPU queue has two places, request D arrives while A is waiting, and B is still using CPU when A's I/O completes:
+
+```text
+                    A on CPU       A on I/O       A needs CPU again
+CPU worker          [A]            [B]            [B]
+I/O wait             -             [A]             -
+CPU queue (2)       [B] [C]        [C] [D]        [C] [D]
+outside queue        -              -             [A: resume]
+```
+
+A did not finish when it left the CPU worker, so it should still count against the started-work limit. Once its I/O completes, it needs CPU time to process the result, but both queue places are full. Its continuation now waits *outside* the bounded input queue. If it joins the same FIFO queue when space opens, C and D are already ahead of it.
 
 I have seen three ways to arrange this. A strictly sequential pipeline can have a pool and bounded queue for each stage—CPU, I/O, post-processing CPU, perhaps another I/O stage—with sizes and backpressure tuned together.
 
@@ -294,7 +307,7 @@ That contract has consequences beyond the service itself. Rejected work may retu
 
 "Retries cause retry storms" is a misleading shortcut. A retry is another attempt at the same logical request; what matters is its cost and whether the work still has a chance to succeed. The caller and the receiving service pay different costs.
 
-For the caller, the failed attempt's latency and any backoff before trying again both eat into the deadline. Another attempt adds traffic and may repeat an operation whose previous outcome is unknown. A timeout does not prove the first attempt failed. I would give retries a budget, jitter their timing, and make the operation's idempotency contract explicit.[^retries]
+For the caller, the failed attempt's latency and any backoff before trying again both eat into the deadline. Another attempt adds traffic and may repeat an operation whose previous outcome is unknown. A timeout does not prove the first attempt failed, which is why the operation's idempotency contract matters.[^retries]
 
 That caller may itself be a service with another caller waiting on it. Imagine 100 requests/s moving through A → B → C. If C's response time grows from 100 milliseconds to one second while it still completes the same rate, Little's Law says roughly 90 more requests remain in flight. If A and B each hold a request context until C replies, both now retain those extra requests in memory; their active-request counts rise even though arrivals have not.
 
@@ -452,6 +465,10 @@ Here \(\rho_{\text{target}}\) is utilization before the burst, \(\rho_{\max}\) i
 
 At 20 milliseconds of CPU per request, 65% of four cores is enough for about 130 useful requests/s per pod. Ten pods could therefore serve 1,300/s before the burst. A 30% rise brings demand to 1,690/s, just under their combined tested limit of 1,700/s. But this leaves no room for a pod failure: nine pods can finish only about 1,530/s at that limit. If the burst and a pod loss can happen together, we need more reserve or a lower target. Admission still has to protect the surviving pods while replacement capacity arrives.
 
+If I use the Kubernetes Horizontal Pod Autoscaler (HPA), I would check the denominator before copying that 65% into `averageUtilization`: HPA measures CPU against the pod's **CPU request**, not the four usable cores assumed here.[^kubernetes]
+
+Admission changes the scaling signal too. Suppose shedding holds each pod near that target while eligible requests are being refused. A CPU-only autoscaler sees no reason to add pods, even though demand is unserved. I would also track unique eligible work that was rejected, or the age of useful backlog in a pipeline, and use an appropriate demand-based scaling signal if more replicas can actually increase the limiting resource. Raw retry attempts and quota denials are not that signal.
+
 Then repeat the calculation for a node or availability zone loss. How much capacity remains, and can the surviving pods reject excess work without collapsing? Scaling policy and per-pod self-defense answer different parts of that question. A load test at 2× or 10× offered traffic is often more revealing than a clean autoscaling graph from a normal afternoon.
 
 ## Putting everything together
@@ -470,7 +487,7 @@ If a request is rejected, a client may retry it; if a consumer pauses, the broke
 
 ### A real-time request service
 
-Suppose a four-core service spends 20 milliseconds of CPU per request, and load testing shows that it completes about 170 useful requests/s within the latency objective for its usual workload mix. It normally receives 130/s, but traffic rises to 200/s for ten seconds. Accepting the whole spike would leave roughly 300 requests waiting: 30 excess arrivals/s for ten seconds.
+Suppose a four-core service spends 20 milliseconds of CPU per request, and load testing shows that it completes about 170 useful requests/s within the latency objective for its usual workload mix. It normally receives 130/s, but traffic rises to 200/s for ten seconds. For this sizing example, we also assume workers keep taking about 170 requests/s from the waiting queue during the burst. Accepting the whole spike would then leave roughly 300 requests waiting: 30 excess arrivals/s for ten seconds.
 
 Now compare that backlog with the latency budget. A 100-millisecond queue-wait budget suggests only about 17 waiting places (`170/s × 0.1s`); we might start with 16 and test. That queue can absorb a brief variation, not all 300 requests. We also need a separate, load-tested limit on started requests, including those waiting on I/O.
 
@@ -491,9 +508,9 @@ slot or short wait ---------> reject: full / too late
 CPU -> limited dependency -> reply -> release slot
 ```
 
-The active slot stays held through CPU work and I/O, and is released on every exit. If the last dependency slows, upstream services may also retain request contexts in memory while they wait for it. If CPU and I/O use separate worker pools, their handoff queues and returning continuations need bounds too. Calls to a scarce dependency need their own limit and a breaker check at the call site, since its state may change after admission. Cancellation must release both kinds of slot. An unbounded number of coroutines waiting to enter the queue would defeat the boundary we just built.
+The active slot stays held through CPU work and I/O, and is released when the work it counts actually stops. If the last dependency slows, upstream services may also retain request contexts in memory while they wait for it. If CPU and I/O use separate worker pools, their handoff queues and returning continuations need bounds too. Calls to a scarce dependency need their own limit and a breaker check at the call site, since its state may change after admission. Cancellation should reach queued and active work, but a timed-out request is not proof that its computation has stopped; releasing its permit early could put new work beside the old work and exceed the limit.[^cancellation] An unbounded number of coroutines waiting to enter the queue would defeat the boundary we just built.
 
-If the caller chooses to retry a quick refusal, the waiting moves there. That caller may still hold the original request in memory throughout its backoff, so a cheap rejection for this pod is not necessarily cheap for the whole path. A retry to another pod may find spare capacity; repeated refusals should make the caller slow down or give up, not keep searching. The retry loop needs a deadline and a budget, should jitter its waits, and should honor `Retry-After` when supplied. If a later failure can make the caller repeat expensive preparation, consider caching that result or retrying only the failed step; an unknown outcome also needs an idempotency rule.
+If the caller retries a quick refusal, the waiting moves there. It may still hold the original request in memory throughout backoff, so a cheap rejection for this pod is not necessarily cheap for the whole path. Keep that retry loop within a deadline and attempt budget, jitter its waits, and honor `Retry-After` when supplied. If a later failure can make the caller repeat expensive preparation, consider caching that result or retrying only the failed step; an unknown outcome also needs an idempotency rule.
 
 Meanwhile, the pod keeps the same admission limits as replicas arrive or disappear. I would graph unique requests offered, retry attempts, admissions, queue wait, rejections by reason, and useful on-time completions together. More pods help only after they are ready; they do not justify unbounded waiting until then.
 
@@ -536,6 +553,21 @@ For System A, we know throughput collapsed as pods restarted under the peak. If 
 
 System B had a different shape: admitted work and waiting stayed bounded while quick rejections took the excess. Successful latency remained within the objective and new pods could join without losing the old ones. CPU near 99% was not the measure of success by itself; useful completions, bounded state, and the fraction of unique offered work finished on time tell us much more.
 
+## A self-defense checklist
+
+Before the next peak, I would want short answers to four questions:
+
+- What resource limits useful completions for each important kind of request, and what does one attempt cost there?
+- Where can work wait—at admission, in a worker handoff, at a dependency, in a broker, or at a caller—and what bounds its number and age?
+- Can we refuse work that is over quota, too late, or unlikely to succeed *before* it consumes that resource? If work is cancelled, when is the resource actually free?
+- Under excess traffic or a slow dependency, do useful completions hold up, local waiting and memory remain bounded, and eligible rejections remain visible?
+
+During an incident, I would compare unique offered work, retry attempts, admissions, useful on-time completions, and the age of the oldest useful backlog. Then I would change the boundary that is failing and watch for evidence that the change helped:
+
+- If admitted and in-flight work grow while useful completions fall, limit new starts at the scarce stage. Check whether useful throughput recovers as waiting and memory stabilize.
+- If expired work or costly retries occupy that stage, discard stale work or refuse doomed attempts earlier. Wasted resource time should fall, not just the attempt count.
+- If completions and latency hold steady while eligible rejections rise, self-defense is working but demand is still unmet. Add capacity at the *actual* bottleneck if that demand should be served, then check that useful completions rise and rejections fall.
+
 Queues, retries, circuit breakers, and autoscalers are not answers by themselves. They move waiting, stop attempts, or add capacity after a delay. I want to trace a request through the whole path and account for each step: CPU, memory, active slots, connections, downstream work, and the cost of giving up. When the last dependency slows, which upstream requests stay in memory? If we retry, which work repeats and what remains allocated during backoff? Only then can we decide which boundary to add and where.
 
 The question I would take to a design review is: **if callers send ten times your capacity tomorrow—or a required dependency slows tenfold—what will keep completing on time, and where will the rest of the work go?** I do not want every caller to know how to keep my service alive. I want the service to own its capacity boundary and tell callers clearly when it cannot take more, leaving them to decide whether another attempt is worth its cost.
@@ -547,5 +579,6 @@ The question I would take to a design review is: **if callers send ten times you
 [^broker-admission]: Kafka consumers can [pause fetching and commit processed offsets](https://kafka.apache.org/42/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html). An [SQS visibility timeout](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html) makes received messages temporarily invisible; consumers delete them after processing, or they become visible again if not deleted before the timeout.
 [^kubernetes]: Kubernetes documents the timing of [horizontal pod autoscaling](https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/) and the different effects of [liveness and readiness probes](https://kubernetes.io/docs/concepts/workloads/pods/probes/).
 [^tokio]: Tokio's [`Sender::send` documentation](https://docs.rs/tokio/latest/tokio/sync/mpsc/struct.Sender.html) says it waits for channel capacity, while [`try_send`](https://docs.rs/tokio/latest/tokio/sync/mpsc/struct.Sender.html#method.try_send) returns immediately if the buffer is full.
+[^cancellation]: Tokio documents that a running [`spawn_blocking` task cannot be aborted](https://docs.rs/tokio/latest/tokio/task/fn.spawn_blocking.html). The permit for such work must remain held until the work actually exits, even if the request that started it has already timed out.
 
 <!-- Before publication, verify the opening incident figures and the author's personal role in System B against the original operational notes. The opening uses the author's Kubernetes and HTTP-status details. -->
