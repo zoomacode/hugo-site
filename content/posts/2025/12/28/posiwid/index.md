@@ -1,7 +1,7 @@
 ---
 title: "The Purpose of a System Is What It Does"
 date: 2025-12-28T21:37:36+03:00
-draft: false
+draft: true
 author: Anton Golubtsov
 summary:
 tags:
