@@ -1,7 +1,7 @@
 ---
 title: "Heavenly Doors and Flaming Swords"
 date: 2025-07-02T22:53:33+03:00
-draft: false
+draft: true
 author: Anton Golubtsov
 summary:
 tags:
