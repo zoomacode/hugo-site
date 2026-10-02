@@ -1,7 +1,7 @@
 ---
 title: "Предназначение системы — это то, что она делает"
 date: 2025-12-28T21:37:54+03:00
-draft: false
+draft: true
 author: Anton Golubtsov
 summary:
 tags:
