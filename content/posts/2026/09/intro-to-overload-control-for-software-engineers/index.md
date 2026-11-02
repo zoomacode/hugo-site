@@ -29,7 +29,7 @@ There are details to investigate in any real incident like this. Was the first t
 
 ### System B: busy, but working
 
-System B was also exposed to traffic above its capacity for hours. I was able to keep its CPU near 99% while maintaining low latency and as much useful throughput as the service could deliver. The high percentiles of latency increased somewhat, but remained within the service objective. Memory stayed bounded, and new pods could join and start serving. Excess requests were rejected quickly. That system used `429` for the rejection response.[^status]
+System B was also exposed to traffic above its capacity for hours. It kept its CPU near 99% while maintaining low latency and as much useful throughput as the service could deliver. The high percentiles of latency increased somewhat, but remained within the service objective. Memory stayed bounded, and new pods could join and start serving. Excess requests were rejected quickly. That system used `429` for the rejection response.[^status]
 
 Both systems were heavily loaded, but their results were very different. Useful throughput fell close to zero in the first and stayed near capacity in the second.
 
